@@ -1,0 +1,16 @@
+apiVersion : apps/v1beta1
+kind: Deployment
+metadata:
+  name: geverghevotingappkubernetes 
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: geverghevotingappkubernetes 
+    spec:
+      containers:
+        - name: geverghevotingappkubernetes 
+          image: forresterdemo.azurecr.io/geverghevotingappkubernetes
+          ports:
+          - containerPort: 80
