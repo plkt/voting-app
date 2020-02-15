@@ -3,12 +3,15 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- master
-paths:
+  branches:
+    include:
+    - master
+  paths:
     include:
     - result/*
     - .azure-pipelines/result-cicd.yaml
     - manifests/result.yaml
+    
 resources:
 - repo: self
 
