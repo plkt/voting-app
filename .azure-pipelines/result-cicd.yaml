@@ -4,7 +4,11 @@
 
 trigger:
 - master
-
+paths:
+    include:
+    - result/*
+    - .azure-pipelines/result-cicd.yaml
+    - manifests/result.yaml
 resources:
 - repo: self
 

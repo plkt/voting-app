@@ -4,6 +4,11 @@
 
 trigger:
 - master
+paths:
+    include:
+    - worker/*
+    - .azure-pipelines/worker-cicd.yaml
+    - manifests/worker.yaml
 
 resources:
 - repo: self

@@ -4,6 +4,11 @@
 
 trigger:
 - master
+paths:
+    include:
+    - vote/*
+    - .azure-pipelines/vote-cicd.yaml
+    - manifests/vote.yaml
 
 resources:
 - repo: self
