@@ -3,8 +3,10 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- master
-paths:
+  branches:
+    include:
+    - master
+  paths:
     include:
     - worker/*
     - .azure-pipelines/worker-cicd.yaml
