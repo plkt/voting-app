@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: gevergheworkerappkubernetes
-        image: forresterdemo.azurecr.io/geverghevotingappkubernetes
+        image: forresterdemo.azurecr.io/gevergheworkerappkubernetes
         env:
         - name: AZURE_STORAGE_ACCOUNT
           valueFrom:
