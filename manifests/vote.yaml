@@ -11,8 +11,8 @@ spec:
         app: voting-app
     spec:
       containers:
-      - name: worker
-        image: jpoon/vote:latest
+      - name: geverghevotingappkubernetes 
+        image: forresterdemo.azurecr.io/geverghevotingappkubernetes
         env:
         - name: AZURE_STORAGE_ACCOUNT
           valueFrom:
