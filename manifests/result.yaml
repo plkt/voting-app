@@ -11,8 +11,8 @@ spec:
         app: voting-app
     spec:
       containers:
-      - name: result
-        image: jpoon/result:latest
+      - name: gevergheresultappkubernetes
+        image: forresterdemo.azurecr.io/gevergheresultappkubernetes
         env:
         - name: AZURE_STORAGE_ACCOUNT
           valueFrom:

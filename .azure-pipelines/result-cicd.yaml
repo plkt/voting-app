@@ -14,7 +14,7 @@ variables:
   dockerRegistryServiceConnection: 'fd784926-9618-4285-aa52-4ee8de2a2085'
   imageRepository: 'gevergheresultappkubernetes'
   containerRegistry: 'forresterdemo.azurecr.io'
-  dockerfilePath: 'vote/Dockerfile'
+  dockerfilePath: 'result/Dockerfile'
   tag: '$(Build.BuildId)'
   imagePullSecret: 'forresterdemo93936db5-auth'
 
@@ -70,7 +70,7 @@ stages:
             inputs:
               action: deploy
               manifests: |
-                $(Pipeline.Workspace)/manifests/vote.yaml
+                $(Pipeline.Workspace)/manifests/result.yaml
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
