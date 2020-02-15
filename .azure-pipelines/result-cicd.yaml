@@ -16,7 +16,7 @@ variables:
   containerRegistry: 'forresterdemo.azurecr.io'
   dockerfilePath: 'result/Dockerfile'
   tag: '$(Build.BuildId)'
-  imagePullSecret: 'forresterdemo93936db5-auth'
+  imagePullSecret: 'forresterdemosecret'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
