@@ -46,10 +46,7 @@ stages:
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
-          $(tag)
-          
-    - upload: manifests
-      artifact: manifests
+          $(tag)          
 
 - stage: Deploy
   displayName: Deploy stage
@@ -71,15 +68,21 @@ stages:
               action: createSecret
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+
+          - task: KubernetesManifest@0
+            name: bake
+            displayName: Bake K8s manifests from Helm chart
+            inputs:
+              action: bake
+              renderType: helm2
+              helmChart: vote/helm
               
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
               action: deploy
-              manifests: |
-                $(Pipeline.Workspace)/manifests/result.yaml
+              manifests: $(bake.manifestsBundle)
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
-
