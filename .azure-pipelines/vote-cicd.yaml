@@ -3,8 +3,10 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- master
-paths:
+  branches:
+    include:
+    - master
+  paths:
     include:
     - vote/*
     - .azure-pipelines/vote-cicd.yaml
@@ -17,7 +19,7 @@ variables:
 
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: 'fd784926-9618-4285-aa52-4ee8de2a2085'
-  imageRepository: 'gevergheresultappkubernetes'
+  imageRepository: 'geverghevotingappkubernetes'
   containerRegistry: 'forresterdemo.azurecr.io'
   dockerfilePath: 'vote/Dockerfile'
   tag: '$(Build.BuildId)'
