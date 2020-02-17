@@ -1,0 +1,6 @@
+# UI controll
+replicas: 2
+port: 80
+image:
+  repository: "actionregistry.azurecr.io/contosoaction"
+  tag: latest

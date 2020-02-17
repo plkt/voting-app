@@ -1,0 +1,17 @@
+apiVersion : apps/v1beta1
+kind: Deployment
+metadata:
+  name: aksdemo 
+spec:
+  replicas: {{ .Values.replicas }}
+  template:
+    metadata:
+      labels:
+        app: aksdemo 
+    spec:
+      containers:
+        - name: aksdemo 
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: Always
+          ports:
+          - containerPort: {{ .Values.port }}
