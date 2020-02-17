@@ -48,9 +48,6 @@ stages:
         tags: |
           $(tag)     
 
-    - upload: result/helm
-      artifact: result/helm
-
 - stage: Deploy
   displayName: Deploy stage
   dependsOn: Build
