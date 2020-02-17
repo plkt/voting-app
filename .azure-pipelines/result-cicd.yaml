@@ -46,7 +46,10 @@ stages:
         dockerfile: $(dockerfilePath)
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
-          $(tag)          
+          $(tag)     
+
+    - upload: result/helm
+      artifact: result/helm
 
 - stage: Deploy
   displayName: Deploy stage
