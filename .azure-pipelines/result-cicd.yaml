@@ -85,6 +85,9 @@ stages:
             inputs:
               action: deploy
               manifests: $(bake.manifestsBundle)
+              strategy: canary
+              trafficSplitMethod: smi
+              percentage: 20
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
