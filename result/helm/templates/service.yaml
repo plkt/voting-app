@@ -1,13 +1,3 @@
-kind: Service
-metadata:
-    name: {{ .Values.servicename }}
-spec:
-    type: LoadBalancer
-    ports:
-    - port: {{ .Values.port }}
-    selector:
-        app: aksdemo
-
 apiVersion: v1
 kind: Service
 metadata:
