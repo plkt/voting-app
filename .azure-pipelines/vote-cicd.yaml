@@ -60,7 +60,7 @@ stages:
     displayName: Deploy
     pool:
       vmImage: $(vmImageName)
-    environment: 'geverghevotingappkubernetes.contoso-aks'
+    environment: 'Stage.contoso-aks'
     strategy:
       runOnce:
         deploy:

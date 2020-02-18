@@ -90,7 +90,7 @@ stages:
     condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/pull/'))
     pool:
       vmImage: $(vmImageName)      
-    environment: 'geverghevotingappkubernetes.$(k8sNamespaceForPR)' 
+    environment: 'Stage.$(k8sNamespaceForPR)' 
     strategy:
       runOnce:
         deploy:
@@ -140,7 +140,7 @@ stages:
     condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
     pool:
       vmImage: $(vmImageName)
-    environment: 'geverghevotingappkubernetes.default'
+    environment: 'Stage.default'
     strategy:
       runOnce:
         deploy:
