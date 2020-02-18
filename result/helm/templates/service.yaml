@@ -9,4 +9,4 @@ spec:
   ports:
   - port: {{ .Values.port }}
   selector:
-    name: {{ .Values.deploymentname }}
+    name: result
