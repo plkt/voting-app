@@ -32,6 +32,9 @@ variables:
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
   
+  # Variables for webapp
+  azureSubscription: 'RMPM (afc11291-9826-46be-b852-70349146ddf8)'
+  appName: 'welcometogithubazure'
 
 stages:
 - stage: Build
@@ -127,8 +130,8 @@ stages:
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
 
-- stage: Deploy
-  displayName: Deploy stage
+- stage: DeployCanary
+  displayName: Deploy Canary
   dependsOn: Build
 
   jobs:
@@ -169,3 +172,101 @@ stages:
                 $(imagePullSecret)
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
+
+- stage: DeployProductionAKS
+  displayName: Deploy to Production.contoso-aks
+  dependsOn: DeployCanary
+
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'Production.contoso-aks'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: createSecret
+              secretName: $(imagePullSecret)
+              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+
+          - task: KubernetesManifest@0
+            name: bake
+            displayName: Bake K8s manifests from Helm chart
+            inputs:
+              action: bake
+              renderType: helm2
+              helmChart: $(Pipeline.Workspace)/result/helm
+              
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: deploy
+              manifests: $(bake.manifestsBundle)             
+              imagePullSecrets: |
+                $(imagePullSecret)
+              containers: |
+                $(containerRegistry)/$(imageRepository):$(tag)
+
+stage: DeployProductionGKE
+  displayName: Deploy to Production.GKE
+  dependsOn: DeployCanary
+
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'Production.contoso-gke'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: createSecret
+              secretName: $(imagePullSecret)
+              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+
+          - task: KubernetesManifest@0
+            name: bake
+            displayName: Bake K8s manifests from Helm chart
+            inputs:
+              action: bake
+              renderType: helm2
+              helmChart: $(Pipeline.Workspace)/result/helm
+              
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: deploy
+              manifests: $(bake.manifestsBundle)             
+              imagePullSecrets: |
+                $(imagePullSecret)
+              containers: |
+                $(containerRegistry)/$(imageRepository):$(tag)
+
+- stage: DeployProductionAzureWebApp
+  displayName: Deploy to Production.WebApp
+  condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
+  dependsOn: DeployCanary
+  pool:
+    vmImage: $(vmImageName)
+
+  jobs:
+  - job: DeploytoAzureWebApp
+
+    steps:
+    - task: AzureWebAppContainer@1
+      displayName: 'Azure Web App on Container Deploy'
+      inputs:
+        azureSubscription: $(azureSubscription)
+        appName: $(appName)
+        containers: $(containerRegistry)/$(imageRepository):$(tag)
