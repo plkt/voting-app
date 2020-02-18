@@ -6,6 +6,7 @@ trigger:
   branches:
     include:
     - master
+    - refs/pull/*
   paths:
     include:
     - result/*
@@ -24,6 +25,9 @@ variables:
   dockerfilePath: 'result/Dockerfile'
   tag: '$(Build.BuildId)'
   imagePullSecret: 'forresterdemosecret'
+
+  # Name of the new namespace being created to deploy the PR changes.
+  k8sNamespaceForPR: '$(system.pullRequest.sourceBranch)'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
@@ -51,13 +55,64 @@ stages:
     - upload: result/helm
       artifact: result/helm
 
+- stage: ReviewApp
+  displayName: deploy Pull Request
+  dependsOn: Build
+
+  jobs:
+  - deployment: DeployPullRequest
+    displayName: Deploy Pull request
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/pull/'))
+    pool:
+      vmImage: $(vmImageName)      
+    environment: 'geverghevotingappkubernetes.$(k8sNamespaceForPR)' 
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - reviewApp: contoso-aks
+
+          - task: Kubernetes@1
+            displayName: 'Create a new namespace for the pull request'
+            inputs:
+              command: apply
+              useConfigurationFile: true
+              inline: '{ "kind": "Namespace", "apiVersion": "v1", "metadata": { "name": "$(k8sNamespaceForPR)" }}'
+
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: createSecret
+              secretName: $(imagePullSecret)
+              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+
+          - task: KubernetesManifest@0
+            name: bake
+            displayName: Bake K8s manifests from Helm chart
+            inputs:
+              action: bake
+              renderType: helm2
+              helmChart: $(Pipeline.Workspace)/result/helm
+          
+          - task: KubernetesManifest@0
+            displayName: Deploy to the new namespace in the Kubernetes cluster
+            inputs:
+              action: deploy
+              namespace: $(k8sNamespaceForPR)
+              manifests: $(bake.manifestsBundle)
+              imagePullSecrets: |
+                $(imagePullSecret)
+              containers: |
+                $(containerRegistry)/$(imageRepository):$(tag)
+
 - stage: Deploy
   displayName: Deploy stage
-  dependsOn: Build
+  dependsOn: Build  
 
   jobs:
   - deployment: Deploy
     displayName: Deploy
+    condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
     pool:
       vmImage: $(vmImageName)
     environment: 'geverghevotingappkubernetes.default'
