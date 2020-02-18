@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: {{ .Values.image.name }}
-        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        image: {{ .Values.image.repository }}
         env:
         - name: AZURE_STORAGE_ACCOUNT
           valueFrom:
