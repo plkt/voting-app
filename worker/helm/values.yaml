@@ -1,6 +1,9 @@
-# UI controll
-replicas: 2
+deploymentname: worker-deployment
+replicas: 1
 port: 80
 image:
-  repository: "actionregistry.azurecr.io/contosoaction"
+  name: gevergheworkerappkubernetes
+  repository: "forresterdemo.azurecr.io/gevergheworkerappkubernetes"
   tag: latest
+azurestorageaccountsecret: azure-storage
+servicename: vote-service
