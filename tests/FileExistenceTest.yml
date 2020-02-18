@@ -3,5 +3,5 @@ schemaVersion: '2.0.0'
 fileExistenceTests:
 
 - name: 'Package File Exist test'
-  path: '/app/server.js
+  path: '/app'
   shouldExist: true
