@@ -7,7 +7,7 @@ spec:
   template:
     metadata:
       labels:
-        name: {{ .Values.deploymentname }}
+        name: result
         app: voting-app
     spec:
       containers:
