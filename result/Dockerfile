@@ -2,7 +2,7 @@ FROM node:5.11.0-slim
 
 WORKDIR /app
 
-RUN npm install -g nodemon
+# RUN npm install -g nodemon
 ADD . /app
 RUN npm install 
 
