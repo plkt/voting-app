@@ -55,7 +55,30 @@ stages:
     - upload: result/helm
       artifact: result/helm
 
-- stage: ReviewApp
+  - job: Test
+    dependsOn: Build
+    displayName: Run tests
+    variables: { agent.disablelogplugin.TestResultLogPlugin: 'false' }
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: PublishTestResults@2
+      displayName: 'Publish Test Results test-all.trx'
+      inputs:
+        testResultsFormat: VSTest
+        testResultsFiles: '**/*.trx'
+        mergeTestResults: true
+    - task: ContainerStructureTest@0
+      displayName: 'Container Structure Test '
+      inputs:
+        dockerRegistryServiceConnection: '$(dockerRegistryServiceConnection)'
+        repository: '$(imageRepository)'
+        tag: '$(tag)'
+        configFile: tests/FileExistenceTest.yml
+        testRunTitle: 'File Existence test'
+        failTaskOnFailedTests: false
+
+  - stage: ReviewApp
   displayName: deploy Pull Request
   dependsOn: Build
 
