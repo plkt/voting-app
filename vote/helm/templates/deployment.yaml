@@ -1,17 +1,28 @@
-apiVersion : apps/v1beta1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: aksdemo 
+  name: {{ .Values.deploymentname }}
 spec:
   replicas: {{ .Values.replicas }}
   template:
     metadata:
       labels:
-        app: aksdemo 
+        name: vote
+        app: voting-app
     spec:
       containers:
-        - name: aksdemo 
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: Always
-          ports:
-          - containerPort: {{ .Values.port }}
+      - name: {{ .Values.image.name }}
+        image: {{ .Values.image.repository }}
+        env:
+        - name: AZURE_STORAGE_ACCOUNT
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.azurestorageaccountsecret }}
+              key: account-name
+        - name: AZURE_STORAGE_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.azurestorageaccountsecret }}
+              key: access-key
+        ports:
+        - containerPort: {{ .Values.port }}

@@ -1,6 +1,9 @@
-# UI controll
-replicas: 2
+deploymentname: vote-deployment
+replicas: 5
 port: 80
 image:
-  repository: "actionregistry.azurecr.io/contosoaction"
+  name: geverghevotingappkubernetes
+  repository: "forresterdemo.azurecr.io/geverghevotingappkubernetes"
   tag: latest
+azurestorageaccountsecret: azure-storage
+servicename: vote-service
