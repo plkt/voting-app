@@ -18,11 +18,13 @@ spec:
           valueFrom:
             secretKeyRef:
               name: {{ .Values.azurestorageaccountsecret }}
+              namespace: default
               key: account-name
         - name: AZURE_STORAGE_ACCESS_KEY
           valueFrom:
             secretKeyRef:
               name: {{ .Values.azurestorageaccountsecret }}
+              namespace: default
               key: access-key
         ports:
         - containerPort: {{ .Values.port }}
