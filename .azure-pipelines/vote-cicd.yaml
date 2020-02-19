@@ -18,7 +18,7 @@ resources:
 variables:
 
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: 'fd784926-9618-4285-aa52-4ee8de2a2085'
+  dockerRegistryServiceConnection: '621a834f-49c3-4f4e-a151-fa59b0924954'
   imageRepository: 'geverghevotingappkubernetes'
   containerRegistry: 'forresterdemo.azurecr.io'
   dockerfilePath: 'vote/Dockerfile'
