@@ -63,13 +63,7 @@ stages:
     variables: { agent.disablelogplugin.TestResultLogPlugin: 'false' }
     pool:
       vmImage: $(vmImageName)
-    steps:
-    - task: PublishTestResults@2
-      displayName: 'Publish Test Results test-all.trx'
-      inputs:
-        testResultsFormat: VSTest
-        testResultsFiles: '**/*.trx'
-        mergeTestResults: true
+    steps:  
     - task: ContainerStructureTest@0
       displayName: 'Container Structure Test '
       inputs:
