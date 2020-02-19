@@ -69,7 +69,7 @@ stages:
             displayName: Create imagePullSecret
             inputs:
               action: createSecret
-              namespace: "Stage.contoso-stage-aks"
+              namespace: "contoso-stage-aks"
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
 
@@ -85,7 +85,7 @@ stages:
             displayName: Deploy to Kubernetes cluster
             inputs:
               action: deploy
-              namespace: "Stage.contoso-stage-aks"
+              namespace: "contoso-stage-aks"
               manifests: $(bake.manifestsBundle)
               imagePullSecrets: |
                 $(imagePullSecret)
