@@ -60,7 +60,7 @@ stages:
     displayName: Deploy
     pool:
       vmImage: $(vmImageName)
-    environment: 'Stage.contoso-aks'
+    environment: 'Stage.contoso-stage-aks'
     strategy:
       runOnce:
         deploy:
