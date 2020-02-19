@@ -106,6 +106,16 @@ stages:
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
 
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: 'RMPM (afc11291-9826-46be-b852-70349146ddf8)'
+              scriptType: 'batch'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az aks get-credentials -n ForresterDemo -g ForresterDemo
+                kubectl get secret azure-storage --namespace=default --export -o yaml |\
+                   kubectl apply --namespace=$(k8sNamespaceForPR) -f -
+
           - task: KubernetesManifest@0
             name: bake
             displayName: Bake K8s manifests from Helm chart
