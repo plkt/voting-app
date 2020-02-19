@@ -6,7 +6,6 @@ trigger:
   branches:
     include:
     - master
-    - refs/pull/*
   paths:
     include:
     - result/*
@@ -81,55 +80,6 @@ stages:
         testRunTitle: 'File Existence test'
         failTaskOnFailedTests: false
 
-- stage: ReviewApp
-  displayName: deploy Pull Request
-  dependsOn: Build
-  jobs:
-  - deployment: DeployPullRequest
-    displayName: Deploy Pull request
-    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/pull/'))
-    pool:
-      vmImage: $(vmImageName)      
-    environment: 'Stage.$(k8sNamespaceForPR)' 
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - reviewApp: contoso-aks
-
-          - task: Kubernetes@1
-            displayName: 'Create a new namespace for the pull request'
-            inputs:
-              command: apply
-              useConfigurationFile: true
-              inline: '{ "kind": "Namespace", "apiVersion": "v1", "metadata": { "name": "$(k8sNamespaceForPR)" }}'
-
-          - task: KubernetesManifest@0
-            displayName: Create imagePullSecret
-            inputs:
-              action: createSecret
-              secretName: $(imagePullSecret)
-              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
-
-          - task: KubernetesManifest@0
-            name: bake
-            displayName: Bake K8s manifests from Helm chart
-            inputs:
-              action: bake
-              renderType: helm2
-              helmChart: $(Pipeline.Workspace)/result/helm
-          
-          - task: KubernetesManifest@0
-            displayName: Deploy to the new namespace in the Kubernetes cluster
-            inputs:
-              action: deploy
-              namespace: $(k8sNamespaceForPR)
-              manifests: $(bake.manifestsBundle)
-              imagePullSecrets: |
-                $(imagePullSecret)
-              containers: |
-                $(containerRegistry)/$(imageRepository):$(tag)
-
 - stage: DeployCanary
   displayName: Deploy Canary
   dependsOn: Build
@@ -137,7 +87,6 @@ stages:
   jobs:
   - deployment: Deploy
     displayName: Deploy
-    condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
     pool:
       vmImage: $(vmImageName)
     environment: 'Stage.default'
@@ -180,7 +129,6 @@ stages:
   jobs:
   - deployment: Deploy
     displayName: Deploy
-    condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
     pool:
       vmImage: $(vmImageName)
     environment: 'Production.contoso-aks'
@@ -220,7 +168,6 @@ stages:
   jobs:
   - deployment: Deploy
     displayName: Deploy
-    condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
     pool:
       vmImage: $(vmImageName)
     environment: 'Production.contoso-gke'
@@ -255,7 +202,6 @@ stages:
 
 - stage: DeployProductionAzureWebApp
   displayName: Deploy to Production.WebApp
-  condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
   dependsOn: DeployCanary
   pool:
     vmImage: $(vmImageName)
