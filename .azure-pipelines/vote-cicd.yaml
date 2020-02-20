@@ -16,18 +16,27 @@ resources:
 - repo: self
 
 variables:
-
+- group: VoterAppSecrets  
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '621a834f-49c3-4f4e-a151-fa59b0924954'
-  imageRepository: 'geverghevotingappkubernetes'
-  containerRegistry: 'forresterdemo.azurecr.io'
-  dockerfilePath: 'vote/Dockerfile'
-  tag: '$(Build.BuildId)'
-  imagePullSecret: 'forresterdemosecret'
+- name: dockerRegistryServiceConnection 
+  value: '621a834f-49c3-4f4e-a151-fa59b0924954'
+- name: imageRepository 
+  value: 'geverghevotingappkubernetes'
+- name: containerRegistry 
+  value: 'forresterdemo.azurecr.io'
+- name: dockerfilePath 
+  value: 'vote/Dockerfile'
+- name: tag 
+  value: '$(Build.BuildId)'
+- name: imagePullSecret 
+  value: 'forresterdemosecret'
+- name: azure-storage-secret 
+  value: 'azure-storage'
+ 
 
   # Agent VM image name
-  vmImageName: 'ubuntu-latest'
-  
+- name: vmImageName 
+  value: 'ubuntu-latest'
 
 stages:
 - stage: Build
@@ -69,9 +78,19 @@ stages:
             displayName: Create imagePullSecret
             inputs:
               action: createSecret
-              namespace: "contoso-stage-aks"
+              namespace: "contoso-dev-aks"
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+
+          - task: KubernetesManifest@0
+            displayName: Create storage secret
+            inputs: 
+              action: createSecret
+              secretType: generic
+              secretName: $(azure-storage-secret )
+              secretArguments: --from-literal=azure-storage-account-name=$(azure-storage-username) --from-literal=azure-storage-account-key=$(azure-storage-key)
+              kubernetesServiceConnection: 'Development-contoso-dev-aks-1582199981119'
+              namespace: "contoso-dev-aks"
 
           - task: KubernetesManifest@0
             name: bake
@@ -85,7 +104,7 @@ stages:
             displayName: Deploy to Kubernetes cluster
             inputs:
               action: deploy
-              namespace: "contoso-stage-aks"
+              namespace: "contoso-dev-aks"
               manifests: $(bake.manifestsBundle)
               imagePullSecrets: |
                 $(imagePullSecret)
