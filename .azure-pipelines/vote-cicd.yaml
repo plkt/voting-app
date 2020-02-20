@@ -109,7 +109,7 @@ stages:
             inputs:
               action: bake
               renderType: helm2
-              helmChart: $(Pipeline.Workspace)/result/helm
+              helmChart: $(Pipeline.Workspace)/vote/helm
           
           - task: KubernetesManifest@0
             displayName: Deploy to the new namespace in the Kubernetes cluster
