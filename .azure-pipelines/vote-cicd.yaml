@@ -254,7 +254,7 @@ stages:
     displayName: Deploy
     pool:
       vmImage: $(vmImageName)
-    environment: 'Production.contoso-prod-aks'
+    environment: 'Production.default'
     strategy:
       runOnce:
         deploy:
