@@ -60,6 +60,66 @@ stages:
     - upload: vote/helm
       artifact: vote/helm
 
+- stage: ReviewApp
+  displayName: Deploy Pull Request
+  dependsOn: Build
+  jobs:
+  - deployment: DeployPullRequest
+    displayName: Deploy Pull request
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/pull/'))
+    pool:
+      vmImage: $(vmImageName)      
+    environment: 'Development.$(k8sNamespaceForPR)' 
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - reviewApp: contoso-dev-aks
+
+          - task: Kubernetes@1
+            displayName: 'Create a new namespace for the pull request'
+            inputs:
+              command: apply
+              useConfigurationFile: true
+              inline: '{ "kind": "Namespace", "apiVersion": "v1", "metadata": { "name": "$(k8sNamespaceForPR)" }}'
+
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: createSecret
+              namespace: '$(k8sNamespaceForPR)'
+              secretName: $(imagePullSecret)
+              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+
+          - task: KubernetesManifest@0
+            displayName: Create storage secret
+            inputs: 
+              action: createSecret
+              secretType: generic
+              secretName: $(azure-storage-secret)
+              secretArguments: --from-literal=account-name=$(azure-storage-username) --from-literal=access-key=$(azure-storage-key)
+              kubernetesServiceConnection: 'Development-contoso-dev-aks-1582199981119'
+              namespace: '$(k8sNamespaceForPR)'
+
+          - task: KubernetesManifest@0
+            name: bake
+            displayName: Bake K8s manifests from Helm chart
+            inputs:
+              action: bake
+              renderType: helm2
+              helmChart: $(Pipeline.Workspace)/result/helm
+          
+          - task: KubernetesManifest@0
+            displayName: Deploy to the new namespace in the Kubernetes cluster
+            inputs:
+              action: deploy
+              namespace: $(k8sNamespaceForPR)
+              manifests: $(bake.manifestsBundle)
+              imagePullSecrets: |
+                $(imagePullSecret)
+              containers: |
+                $(containerRegistry)/$(imageRepository):$(tag)
+
 - stage: Deploy
   displayName: Deploy stage
   dependsOn: Build
