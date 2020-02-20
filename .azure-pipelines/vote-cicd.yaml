@@ -200,7 +200,7 @@ stages:
     displayName: Deploy
     pool:
       vmImage: $(vmImageName)
-    environment: 'Production.contoso-prod-aks'
+    environment: 'Production.default'
     strategy:
       runOnce:
         deploy:
@@ -210,7 +210,7 @@ stages:
             inputs:
               action: createSecret
               secretName: $(imagePullSecret)
-              namespace: 'contoso-prod-aks'
+              namespace: 'default'
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
           
           - task: KubernetesManifest@0
@@ -221,7 +221,7 @@ stages:
               secretName: $(azure-storage-secret)
               secretArguments: --from-literal=account-name=$(azure-storage-username) --from-literal=access-key=$(azure-storage-key)
               kubernetesServiceConnection: 'Production-contoso-prod-aks-1582200387426'
-              namespace: 'contoso-prod-aks'
+              namespace: 'default'
 
           - task: KubernetesManifest@0
             name: bake
@@ -236,7 +236,7 @@ stages:
             inputs:
               action: deploy
               manifests: $(bake.manifestsBundle)
-              namespace: 'contoso-prod-aks'
+              namespace: 'default'
               strategy: canary
               trafficSplitMethod: smi
               percentage: 50
@@ -264,7 +264,7 @@ stages:
             inputs:
               action: createSecret
               secretName: $(imagePullSecret)
-              namespace: "contoso-prod-aks"
+              namespace: "default"
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
           
           - task: KubernetesManifest@0
@@ -275,7 +275,7 @@ stages:
               secretName: $(azure-storage-secret)
               secretArguments: --from-literal=account-name=$(azure-storage-username) --from-literal=access-key=$(azure-storage-key)
               kubernetesServiceConnection: 'Production-contoso-prod-aks-1582200387426'
-              namespace: "contoso-prod-aks"
+              namespace: "default"
 
           - task: KubernetesManifest@0
             name: bake
@@ -290,7 +290,7 @@ stages:
             inputs:
               action: deploy
               manifests: $(bake.manifestsBundle)
-              namespace: 'contoso-prod-aks'              
+              namespace: 'default'              
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
