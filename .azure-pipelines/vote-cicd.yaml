@@ -6,6 +6,7 @@ trigger:
   branches:
     include:
     - master
+    - refs/pull/*
   paths:
     include:
     - vote/*
@@ -123,6 +124,7 @@ stages:
 - stage: Deploy
   displayName: Deploy stage
   dependsOn: Build
+  condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
 
   jobs:
   - deployment: Deploy
