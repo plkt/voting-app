@@ -33,7 +33,8 @@ variables:
   value: 'forresterdemosecret'
 - name: azure-storage-secret 
   value: 'azure-storage'
- 
+- name: k8sNamespaceForPR 
+  value: '$(system.pullRequest.sourceBranch)'
 
   # Agent VM image name
 - name: vmImageName 
