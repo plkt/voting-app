@@ -274,7 +274,7 @@ stages:
               secretType: generic
               secretName: $(azure-storage-secret)
               secretArguments: --from-literal=account-name=$(azure-storage-username) --from-literal=access-key=$(azure-storage-key)
-              kubernetesServiceConnection: 'Production-contoso-prod-gke-1582202369145'
+              kubernetesServiceConnection: 'Production-contoso-prod-aks-1582200387426'
               namespace: "contoso-prod-aks"
 
           - task: KubernetesManifest@0
