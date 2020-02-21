@@ -276,11 +276,11 @@ stages:
 - stage: RollBack
   displayName: Roll back  
   dependsOn: DeployProd
+  condition: failed()
 
   jobs:
   - deployment: RollBack
-    displayName: Roll back deployment
-    condition: failed()
+    displayName: Roll back deployment    
     pool:
       vmImage: $(vmImageName)
     environment: 'Production.default'
