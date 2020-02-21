@@ -273,6 +273,11 @@ stages:
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
 
+- stage: RollBack
+  displayName: Roll back  
+  dependsOn: DeployProd
+
+  jobs:
   - deployment: RollBack
     displayName: Roll back deployment
     condition: failed()
