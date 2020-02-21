@@ -246,12 +246,13 @@ stages:
                 $(containerRegistry)/$(imageRepository):$(tag)
 
 - stage: DeployProd
-  displayName: Deploy to Production
-  dependsOn: DeployCanary
+  displayName: Deploy to Production  
+  dependsOn: DeployCanary  
 
   jobs:
   - deployment: Deploy
     displayName: Deploy
+    condition: succeeded()
     pool:
       vmImage: $(vmImageName)
     environment: 'Production.default'
@@ -290,7 +291,10 @@ stages:
             inputs:
               action: deploy
               manifests: $(bake.manifestsBundle)
-              namespace: 'default'              
+              namespace: 'default'   
+              strategy: canary
+              trafficSplitMethod: smi
+              percentage: 100           
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
