@@ -191,28 +191,29 @@ stages:
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
 
-- stage: DeployCanary
-  displayName: Deploy Canary
+- stage: DeploymentStrategy
+  displayName: DeploymentStrategy
   dependsOn: DeployToQA
 
   jobs:
-  - deployment: Deploy
-    displayName: Deploy
+  - deployment: DeploymentStrategy    
+    displayName: Deploy Job Canary
+    environment: Production.default   
     pool:
-      vmImage: $(vmImageName)
-    environment: 'Production.default'
+      vmImage: $(vmImageName)    
     strategy:
-      runOnce:
+      canary:  
+        increments: [50]     
         deploy:
           steps:
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
             inputs:
               action: createSecret
+              namespace: '$(k8sNamespaceForPR)'
               secretName: $(imagePullSecret)
-              namespace: 'default'
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
-          
+
           - task: KubernetesManifest@0
             displayName: Create storage secret
             inputs: 
@@ -220,81 +221,9 @@ stages:
               secretType: generic
               secretName: $(azure-storage-secret)
               secretArguments: --from-literal=account-name=$(azure-storage-username) --from-literal=access-key=$(azure-storage-key)
-              kubernetesServiceConnection: 'Production-contoso-prod-aks-1582200387426'
-              namespace: 'default'
+              kubernetesServiceConnection: 'Development-contoso-dev-aks-1582199981119'
+              namespace: '$(k8sNamespaceForPR)'
 
-          - task: KubernetesManifest@0
-            name: bake
-            displayName: Bake K8s manifests from Helm chart
-            inputs:
-              action: bake
-              renderType: helm2
-              helmChart: $(Pipeline.Workspace)/vote/helm
-              
-          - task: KubernetesManifest@0
-            displayName: Deploy to Kubernetes cluster
-            inputs:
-              action: deploy
-              manifests: $(bake.manifestsBundle)
-              namespace: 'default'
-              strategy: canary
-              trafficSplitMethod: smi
-              percentage: 50
-              imagePullSecrets: |
-                $(imagePullSecret)
-              containers: |
-                $(containerRegistry)/$(imageRepository):$(tag)
-
-- stage: DeployProd
-  displayName: Deploy to Production  
-  dependsOn: DeployCanary  
-
-  jobs:
-  - deployment: DeployToProd
-    displayName: Deploy to production
-    condition: succeeded()
-    pool:
-      vmImage: $(vmImageName)
-    environment: 'Production.default'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: KubernetesManifest@0
-            name: bake
-            displayName: Bake K8s manifests from Helm chart
-            inputs:
-              action: bake
-              renderType: helm2
-              helmChart: $(Pipeline.Workspace)/vote/helm              
-          - task: KubernetesManifest@0
-            displayName: Deploy to Kubernetes cluster
-            inputs:
-              action: promote
-              manifests: $(bake.manifestsBundle)
-              namespace: 'default'   
-              strategy: canary
-              trafficSplitMethod: smi                       
-              imagePullSecrets: |
-                $(imagePullSecret)
-              containers: |
-                $(containerRegistry)/$(imageRepository):$(tag)
-
-- stage: RollBack
-  displayName: Roll back  
-  dependsOn: DeployProd
-  condition: failed()
-
-  jobs:
-  - deployment: RollBack
-    displayName: Roll back deployment    
-    pool:
-      vmImage: $(vmImageName)
-    environment: 'Production.default'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
           - task: KubernetesManifest@0
             name: bake
             displayName: Bake K8s manifests from Helm chart
@@ -314,3 +243,16 @@ stages:
                 $(imagePullSecret)
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
+        on: 
+          failure: 
+            steps: 
+            - script: echo clean-up, rollback...   
+          success: 
+            steps: 
+            - task: ManualIntervention@8
+              inputs:
+                instructions: 'Do you want to approve the canary to production?'
+                emailRecipients: 'geverghe@microsoft.com'
+
+        
+          
