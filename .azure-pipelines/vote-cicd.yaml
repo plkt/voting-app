@@ -250,7 +250,7 @@ stages:
   dependsOn: DeployCanary  
 
   jobs:
-  - deployment: Deploy
+  - deployment: DeployToProd
     displayName: Deploy to production
     condition: succeeded()
     pool:
@@ -273,7 +273,7 @@ stages:
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
 
-  - deployment: Deploy
+  - deployment: RollBack
     displayName: Roll back deployment
     condition: failed()
     pool:
