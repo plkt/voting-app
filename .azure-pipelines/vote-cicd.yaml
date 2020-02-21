@@ -249,10 +249,6 @@ stages:
             - script: echo clean-up, rollback...   
           success: 
             steps: 
-            - task: ManualIntervention@8
-              inputs:
-                instructions: 'Do you want to approve the canary to production?'
-                emailRecipients: 'geverghe@microsoft.com'
-
+            - script: echo checks passed, notify... 
         
           
