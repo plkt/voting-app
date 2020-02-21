@@ -251,8 +251,31 @@ stages:
 
   jobs:
   - deployment: Deploy
-    displayName: Deploy
+    displayName: Deploy to production
     condition: succeeded()
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'Production.default'
+    strategy:
+      runOnce:
+        deploy:
+          steps:              
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: promote
+              manifests: $(bake.manifestsBundle)
+              namespace: 'default'   
+              strategy: canary
+              trafficSplitMethod: smi                       
+              imagePullSecrets: |
+                $(imagePullSecret)
+              containers: |
+                $(containerRegistry)/$(imageRepository):$(tag)
+
+  - deployment: Deploy
+    displayName: Roll back deployment
+    condition: failed()
     pool:
       vmImage: $(vmImageName)
     environment: 'Production.default'
@@ -261,35 +284,9 @@ stages:
         deploy:
           steps:
           - task: KubernetesManifest@0
-            displayName: Create imagePullSecret
-            inputs:
-              action: createSecret
-              secretName: $(imagePullSecret)
-              namespace: "default"
-              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
-          
-          - task: KubernetesManifest@0
-            displayName: Create storage secret
-            inputs: 
-              action: createSecret
-              secretType: generic
-              secretName: $(azure-storage-secret)
-              secretArguments: --from-literal=account-name=$(azure-storage-username) --from-literal=access-key=$(azure-storage-key)
-              kubernetesServiceConnection: 'Production-contoso-prod-aks-1582200387426'
-              namespace: "default"
-
-          - task: KubernetesManifest@0
-            name: bake
-            displayName: Bake K8s manifests from Helm chart
-            inputs:
-              action: bake
-              renderType: helm2
-              helmChart: $(Pipeline.Workspace)/vote/helm
-              
-          - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
-              action: promote
+              action: reject
               manifests: $(bake.manifestsBundle)
               namespace: 'default'   
               strategy: canary
