@@ -33,23 +33,14 @@ stages:
 - stage: Build
   displayName: Build stage
   jobs:  
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: $(vmImageName)
-    steps:
-    - task: Docker@2
-      displayName: Build and push an image to container registry
-      inputs:
-        command: buildAndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: |
-          $(tag)
-          
-    - upload: worker/helm
-      artifact: worker/helm
+  - template: buildJob.yml@templates
+    parameters:
+      name: 'worker'
+      vmImageName: $(vmImageName)
+      imageRepository: $(imageRepository)
+      dockerfilePath: $(dockerfilePath)
+      dockerRegistryServiceConnection: $(dockerRegistryServiceConnection)
+      tag: $(tag)
 
 - stage: Deploy
   displayName: Deploy stage
