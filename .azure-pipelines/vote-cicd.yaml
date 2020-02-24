@@ -48,6 +48,7 @@ variables:
 stages:
 - template: BuildStage.yaml@templates
   parameters:
+    name: 'vote'
     vmImageName: $(vmImageName)
     imageRepository: $(imageRepository)
     dockerfilePath: $(dockerfilePath)
