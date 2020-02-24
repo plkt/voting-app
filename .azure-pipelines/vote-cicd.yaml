@@ -235,8 +235,7 @@ stages:
             displayName: Deploy to Kubernetes cluster
             inputs:              
               manifests: $(bake.manifestsBundle)
-              namespace: 'default'                 
-              trafficSplitMethod: smi                       
+              namespace: 'default'                        
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
