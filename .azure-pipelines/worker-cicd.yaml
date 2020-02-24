@@ -106,7 +106,7 @@ stages:
             inputs:
               action: bake
               renderType: helm2
-              helmChart: $(Pipeline.Workspace)/vote/helm
+              helmChart: $(Pipeline.Workspace)/worker/helm
           
           - task: KubernetesManifest@0
             displayName: Deploy to the new namespace in the Kubernetes cluster
@@ -158,7 +158,7 @@ stages:
             inputs:
               action: bake
               renderType: helm2
-              helmChart: $(Pipeline.Workspace)/vote/helm
+              helmChart: $(Pipeline.Workspace)/worker/helm
 
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
@@ -209,7 +209,7 @@ stages:
             inputs:
               action: bake
               renderType: helm2
-              helmChart: $(Pipeline.Workspace)/vote/helm
+              helmChart: $(Pipeline.Workspace)/worker/helm
               
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
@@ -246,7 +246,7 @@ stages:
             inputs:
               action: bake
               renderType: helm2
-              helmChart: $(Pipeline.Workspace)/vote/helm              
+              helmChart: $(Pipeline.Workspace)/worker/helm              
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
@@ -281,7 +281,7 @@ stages:
             inputs:
               action: bake
               renderType: helm2
-              helmChart: $(Pipeline.Workspace)/vote/helm
+              helmChart: $(Pipeline.Workspace)/worker/helm
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
