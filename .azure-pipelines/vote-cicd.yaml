@@ -167,29 +167,28 @@ stages:
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
 
-- stage: DeploymentStrategy
-  displayName: DeploymentStrategy
+- stage: DeployCanary
+  displayName: Deploy Canary
   dependsOn: DeployToQA
 
   jobs:
-  - deployment: DeploymentStrategy    
-    displayName: Deploy Job Canary
-    environment: Production.contoso-prod-aks   
+  - deployment: Deploy
+    displayName: Deploy
     pool:
-      vmImage: $(vmImageName)    
+      vmImage: $(vmImageName)
+    environment: 'Production.default'
     strategy:
-      canary:  
-        increments: [50]     
+      runOnce:
         deploy:
           steps:
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
             inputs:
               action: createSecret
-              namespace: 'contoso-prod-aks'
               secretName: $(imagePullSecret)
+              namespace: 'default'
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
-
+          
           - task: KubernetesManifest@0
             displayName: Create storage secret
             inputs: 
@@ -198,8 +197,80 @@ stages:
               secretName: $(azure-storage-secret)
               secretArguments: --from-literal=account-name=$(azure-storage-username) --from-literal=access-key=$(azure-storage-key)
               kubernetesServiceConnection: 'Production-contoso-prod-aks-1582200387426'
-              namespace: 'contoso-prod-aks'
+              namespace: 'default'
 
+          - task: KubernetesManifest@0
+            name: bake
+            displayName: Bake K8s manifests from Helm chart
+            inputs:
+              action: bake
+              renderType: helm2
+              helmChart: $(Pipeline.Workspace)/vote/helm
+              
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: deploy
+              manifests: $(bake.manifestsBundle)
+              namespace: 'default'
+              strategy: canary
+              trafficSplitMethod: smi
+              percentage: 50
+              imagePullSecrets: |
+                $(imagePullSecret)
+              containers: |
+                $(containerRegistry)/$(imageRepository):$(tag)
+
+- stage: DeployProd
+  displayName: Deploy to Production  
+  dependsOn: DeployCanary  
+
+  jobs:
+  - deployment: DeployToProd
+    displayName: Deploy to production
+    condition: succeeded()
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'Production.default'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: KubernetesManifest@0
+            name: bake
+            displayName: Bake K8s manifests from Helm chart
+            inputs:
+              action: bake
+              renderType: helm2
+              helmChart: $(Pipeline.Workspace)/vote/helm              
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: promote
+              manifests: $(bake.manifestsBundle)
+              namespace: 'default'   
+              strategy: canary
+              trafficSplitMethod: smi                       
+              imagePullSecrets: |
+                $(imagePullSecret)
+              containers: |
+                $(containerRegistry)/$(imageRepository):$(tag)
+                
+- stage: RollBack
+  displayName: Roll back  
+  dependsOn: DeployProd
+  condition: failed()
+
+  jobs:
+  - deployment: RollBack
+    displayName: Roll back deployment    
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'Production.default'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
           - task: KubernetesManifest@0
             name: bake
             displayName: Bake K8s manifests from Helm chart
@@ -209,19 +280,13 @@ stages:
               helmChart: $(Pipeline.Workspace)/vote/helm
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
-            inputs:              
+            inputs:
+              action: reject
               manifests: $(bake.manifestsBundle)
-              namespace: 'contoso-prod-aks'                        
+              namespace: 'default'   
+              strategy: canary
+              trafficSplitMethod: smi                       
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
-        on: 
-          failure: 
-            steps: 
-            - script: echo clean-up, rollback...   
-          success: 
-            steps: 
-            - script: echo checks passed, notify... 
-        
-          
