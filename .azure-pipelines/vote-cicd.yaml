@@ -174,7 +174,7 @@ stages:
   jobs:
   - deployment: DeploymentStrategy    
     displayName: Deploy Job Canary
-    environment: Production.default   
+    environment: Production.contoso-prod-aks   
     pool:
       vmImage: $(vmImageName)    
     strategy:
@@ -186,7 +186,7 @@ stages:
             displayName: Create imagePullSecret
             inputs:
               action: createSecret
-              namespace: 'default'
+              namespace: 'contoso-prod-aks'
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
 
@@ -197,8 +197,8 @@ stages:
               secretType: generic
               secretName: $(azure-storage-secret)
               secretArguments: --from-literal=account-name=$(azure-storage-username) --from-literal=access-key=$(azure-storage-key)
-              kubernetesServiceConnection: 'Development-contoso-dev-aks-1582199981119'
-              namespace: 'default'
+              kubernetesServiceConnection: 'Production-contoso-prod-aks-1582200387426'
+              namespace: 'contoso-prod-aks'
 
           - task: KubernetesManifest@0
             name: bake
@@ -211,7 +211,7 @@ stages:
             displayName: Deploy to Kubernetes cluster
             inputs:              
               manifests: $(bake.manifestsBundle)
-              namespace: 'default'                        
+              namespace: 'contoso-prod-aks'                        
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
