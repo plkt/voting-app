@@ -233,11 +233,9 @@ stages:
               helmChart: $(Pipeline.Workspace)/vote/helm
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
-            inputs:
-              action: reject
+            inputs:              
               manifests: $(bake.manifestsBundle)
-              namespace: 'default'   
-              strategy: canary
+              namespace: 'default'                 
               trafficSplitMethod: smi                       
               imagePullSecrets: |
                 $(imagePullSecret)
