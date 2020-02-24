@@ -46,7 +46,7 @@ variables:
   value: 'ubuntu-latest'
 
 stages:
-- template: templates/BuildStage.yaml 
+- template: BuildStage.yaml@templates
 
 - stage: ReviewApp
   displayName: Deploy Pull Request
