@@ -2,25 +2,6 @@
 # Build and push image to Azure Container Registry; Deploy to Azure Kubernetes Service
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
-trigger:
-  branches:
-    include:
-    - master
-    - refs/pull/*
-  paths:
-    include:
-    - vote/*
-    - .azure-pipelines/vote-cicd.yaml
-    - manifests/vote.yaml
-
-resources:
-  repositories:
-  - repository: self
-  - repository: templates
-    type: github
-    name: N-Usha/voting-app-ci-templates
-    endpoint: github.com_N-Usha
-
 variables:
 #- group: VoterAppSecrets  
   # Container registry service connection established during pipeline creation
@@ -44,6 +25,36 @@ variables:
   # Agent VM image name
 - name: vmImageName 
   value: 'ubuntu-latest'
+
+trigger:
+  branches:
+    include:
+    - master
+    - refs/pull/*
+  paths:
+    include:
+    - vote/*
+    - .azure-pipelines/vote-cicd.yaml
+    - manifests/vote.yaml
+
+resources:
+  repositories:
+  - repository: self
+  - repository: templates
+    type: github
+    name: N-Usha/voting-app-ci-templates
+    endpoint: github.com_N-Usha
+
+  containers:
+   - container: Constoso
+     type: ACR
+     azureSubscription: RMPM (afc11291-9826-46be-b852-70349146ddf8)
+     resourceGroup: ForresterDemo
+     registry: ForresterDemo
+     repository: votingappbaseimage
+     trigger:
+      tags:
+      - master_*
 
 stages:
 - template: BuildStage.yaml@templates
