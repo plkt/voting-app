@@ -54,7 +54,7 @@ resources:
      repository: votingappbaseimage
      trigger:
       tags:
-      - master_*
+      - stable
 
 stages:
 - template: BuildStage.yaml@templates
