@@ -194,7 +194,7 @@ stages:
     displayName: Deploy
     pool:
       vmImage: $(vmImageName)
-    environment: 'Production.default'
+    environment: 'Production.contoso-prod-aks'
     strategy:
       runOnce:
         deploy:
@@ -204,7 +204,7 @@ stages:
             inputs:
               action: createSecret
               secretName: $(imagePullSecret)
-              namespace: 'default'
+              namespace: 'contoso-prod-aks'
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
 
           - task: AzureKeyVault@1
@@ -222,7 +222,7 @@ stages:
               secretName: $(azure-storage-secret)
               secretArguments: --from-literal=account-name=$(azure-storage-username) --from-literal=access-key=$(azure-storage-key)
               kubernetesServiceConnection: 'Production-contoso-prod-aks-1582200387426'
-              namespace: 'default'
+              namespace: 'contoso-prod-aks'
 
           - task: KubernetesManifest@0
             name: bake
@@ -237,7 +237,7 @@ stages:
             inputs:
               action: deploy
               manifests: $(bake.manifestsBundle)
-              namespace: 'default'
+              namespace: 'contoso-prod-aks'
               strategy: canary
               trafficSplitMethod: smi
               percentage: 50
@@ -256,7 +256,7 @@ stages:
     condition: succeeded()
     pool:
       vmImage: $(vmImageName)
-    environment: 'Production.default'
+    environment: 'Production.contoso-prod-aks'
     strategy:
       runOnce:
         deploy:
@@ -273,7 +273,7 @@ stages:
             inputs:
               action: promote
               manifests: $(bake.manifestsBundle)
-              namespace: 'default'   
+              namespace: 'contoso-prod-aks'   
               strategy: canary
               trafficSplitMethod: smi                       
               imagePullSecrets: |
@@ -291,7 +291,7 @@ stages:
     displayName: Roll back deployment    
     pool:
       vmImage: $(vmImageName)
-    environment: 'Production.default'
+    environment: 'Production.contoso-prod-aks'
     strategy:
       runOnce:
         deploy:
@@ -308,7 +308,7 @@ stages:
             inputs:
               action: reject
               manifests: $(bake.manifestsBundle)
-              namespace: 'default'   
+              namespace: 'contoso-prod-aks'   
               strategy: canary
               trafficSplitMethod: smi                       
               imagePullSecrets: |
