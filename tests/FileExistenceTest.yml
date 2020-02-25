@@ -7,23 +7,9 @@ fileExistenceTests:
   shouldExist: true
 - name: 'Fake Dir'
   path: '/foo/bar'
-  shouldExist: true
+  shouldExist: false
 - name: 'Wrong permissions'
   path: '/etc/apt/sources.list'
   permissions: '-rwxrwxrwx'
-  shouldExist: true
-  
-commandTests:
-- name: 'apt-get'
-  command: 'apt-get'
-  args: ['help']
-  excludedError: ['.*FAIL.*']
-  expectedOutput: ['.*Usage.*']
-- name: 'apt-config'
-  command: 'apt-config'
-  args: ['dump']
-  expectedOutput: ['Acquire::Retries "3"']
-- name: 'path'
-  command: 'sh'
-  args: ['-c', 'echo $PATH']
-  expectedOutput: ['/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin']
+  shouldExist: false
+ 
