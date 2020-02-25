@@ -22,7 +22,7 @@ resources:
     endpoint: github.com_N-Usha
 
 variables:
-- group: VoterAppSecrets  
+#- group: VoterAppSecrets  
   # Container registry service connection established during pipeline creation
 - name: dockerRegistryServiceConnection 
   value: '621a834f-49c3-4f4e-a151-fa59b0924954'
@@ -85,6 +85,13 @@ stages:
               namespace: '$(k8sNamespaceForPR)'
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+          
+          - task: AzureKeyVault@1
+            displayName: Fetch Storage Secrets from Azure Key vault
+            inputs:
+              azureSubscription: 'RMPM (afc11291-9826-46be-b852-70349146ddf8)'
+              KeyVaultName: 'ForresterDemoKeyVault'
+              SecretsFilter: '*'
 
           - task: KubernetesManifest@0
             displayName: Create storage secret
@@ -137,6 +144,13 @@ stages:
               namespace: "contoso-qa-aks"
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+          
+          - task: AzureKeyVault@1
+            displayName: Fetch Storage Secrets from Azure Key vault
+            inputs:
+              azureSubscription: 'RMPM (afc11291-9826-46be-b852-70349146ddf8)'
+              KeyVaultName: 'ForresterDemoKeyVault'
+              SecretsFilter: '*'
 
           - task: KubernetesManifest@0
             displayName: Create storage secret
@@ -188,6 +202,13 @@ stages:
               secretName: $(imagePullSecret)
               namespace: 'default'
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+          
+          - task: AzureKeyVault@1
+            displayName: Fetch Storage Secrets from Azure Key vault
+            inputs:
+              azureSubscription: 'RMPM (afc11291-9826-46be-b852-70349146ddf8)'
+              KeyVaultName: 'ForresterDemoKeyVault'
+              SecretsFilter: '*'
           
           - task: KubernetesManifest@0
             displayName: Create storage secret
