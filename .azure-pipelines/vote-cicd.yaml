@@ -170,7 +170,7 @@ stages:
               secretType: generic
               secretName: $(azure-storage-secret)
               secretArguments: --from-literal=account-name=$(azure-storage-username) --from-literal=access-key=$(azure-storage-key)
-              kubernetesServiceConnection: 'QA-contoso-qa-aks-1582275708164'
+              kubernetesServiceConnection: 'QA-contoso-qa-aks-1582637596513'
               namespace: "contoso-qa-aks"
 
           - task: KubernetesManifest@0
