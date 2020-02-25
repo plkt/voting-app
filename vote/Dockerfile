@@ -1,5 +1,5 @@
 # Using official python runtime base image
-FROM forresterdemo.azurecr.io/votingappbaseimage
+FROM forresterdemo.azurecr.io/votingappbaseimage:4052
 
 # Set the application directory
 WORKDIR /app
