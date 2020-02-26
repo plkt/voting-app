@@ -12,4 +12,20 @@ fileExistenceTests:
   path: '/etc/apt/sources.list'
   permissions: '-rwxrwxrwx'
   shouldExist: false
+- name: 'Root'
+  path: '/'
+  shouldExist: true
+  uid: 0
+  gid: 0
+- name: 'Date'
+  path: '/bin/date'
+  isExecutableBy: 'owner'
+- name: 'Netbase'
+  path: '/etc/protocols'
+  shouldExist: true
+- name: 'Machine ID'
+  path: '/etc/machine-id'
+- name: 'Dummy File'
+  path: '/etc/dummy'
+  shouldExist: false
  
