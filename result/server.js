@@ -14,6 +14,8 @@ var port = process.env.PORT || 4000;
 var storage_account = process.env.AZURE_STORAGE_ACCOUNT;
 var storage_access_key = process.env.AZURE_STORAGE_ACCESS_KEY;
 
+
+
 io.sockets.on('connection', function (socket) {
   socket.emit('message', { text : 'Welcome!' });
   socket.on('subscribe', function (data) {
@@ -52,7 +54,7 @@ function getVotes(client) {
 }
 
 app.use(cookieParser());
-app.use(bodyParser());
+app.use(bodyParser({ extended: true }));
 app.use(methodOverride('X-HTTP-Method-Override'));
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
