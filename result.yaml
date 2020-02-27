@@ -11,6 +11,7 @@ trigger:
   paths:
     exclude:
       - readme.md
+      
 pr: none    
 
 pool:
