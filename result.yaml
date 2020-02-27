@@ -2,7 +2,7 @@
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
-# note: Unblock inbound access port 4000 for the vm
+# note- this service runs on port 4000. Unblock inbound access to port 4000 for the vm
 # vm1: http://13.90.98.133:4000/
 # vm2: http://52.168.135.88:4000/
 
