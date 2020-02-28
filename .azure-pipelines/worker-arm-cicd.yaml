@@ -20,7 +20,7 @@ stages:
     - task: AzureKeyVault@1
       displayName: Fetch Storage Secrets from Azure Key vault
       inputs:
-        azureSubscription: 'RMPM (afc11291-9826-46be-b852-70349146ddf8)'
+        azureSubscription: 'RMPM (afc11291-9826-46be-b852-70349146ddf8)' 
         KeyVaultName: 'ForresterDemoKeyVault'
         SecretsFilter: '*'
     - task: AzureResourceManagerTemplateDeployment@3
@@ -32,9 +32,7 @@ stages:
         resourceGroupName: 'ForresterDemo'
         location: 'East US'
         templateLocation: 'Linked artifact'
-        csmFile: '$(System.DefaultWorkingDirectory)/arm-templates/aks.json'
+        csmFile: '''$(System.DefaultWorkingDirectory)/arm-templates/aks.json'
         overrideParameters: |
-          -dnsNamePrefix "forresterdemocluster-dns" -adminUsername "MC_ForresterDemoCluster_ForresterDemo_EastUS" -sshRSAPublicKey "$(aks-arm-sshrsa)" -servicePrincipalClientId "$(aks-arm-sp-client-id)" -servicePrincipalClientSecret "$(aks-arm-sp-client-password)"
+          -clusterName "ForresterDemoCluster" -dnsNamePrefix "forresterdemocluster-dns" -linuxAdminUsername "MC_ForresterDemoCluster_ForresterDemo_EastUS" -sshRSAPublicKey "$(aks-arm-sshrsa)" -servicePrincipalClientId "$(aks-arm-sp-client-id)" -servicePrincipalClientSecret "$(aks-arm-sp-client-password)"
         deploymentMode: 'Incremental'
-      
-
