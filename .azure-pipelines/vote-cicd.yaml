@@ -135,7 +135,7 @@ stages:
 
 - stage: DeployToQA
   displayName: Deploy to QA
-  dependsOn: Build
+  dependsOn: ReviewApp
   condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
 
   jobs:
