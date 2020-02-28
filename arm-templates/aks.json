@@ -18,6 +18,7 @@
         },
         "dnsPrefix": {
             "type": "string",
+            "defaultValue": "[concat(parameters('managedClusters_ForresterDemoCluster_name'), '-dns')]",
             "metadata": {
                 "description": "Optional DNS prefix to use with hosted Kubernetes API server FQDN."
             }
