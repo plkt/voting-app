@@ -1,4 +1,4 @@
-FROM node:5.11.0-slim
+FROM node:10.15.2-slim
 
 WORKDIR /app
 
@@ -7,8 +7,9 @@ ADD . /app
 RUN npm install 
 
 ENV PORT 80
-ENV AZURE_STORAGE_ACCOUNT account
-ENV AZURE_STORAGE_ACCESS_KEY key
+ENV SQL_HOSTNAME sql_hostname
+ENV SQL_USERNAME sql_username
+ENV SQL_PASSWORD sql_password
 
 EXPOSE 80
 

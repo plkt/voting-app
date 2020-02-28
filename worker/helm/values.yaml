@@ -6,4 +6,4 @@ image:
   repository: "forresterdemo.azurecr.io/gevergheworkerappkubernetes"
   tag: latest
 azurestorageaccountsecret: azure-storage
-servicename: vote-service
+azuresqlsecret: azure-sql

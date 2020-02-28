@@ -24,3 +24,19 @@ spec:
             secretKeyRef:
               name: azure-storage
               key: access-key
+        - name: SQL_HOSTNAME
+          valueFrom:
+            secretKeyRef:
+              name: azure-sql
+              key: sql-hostname
+        - name: SQL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: azure-sql
+              key: sql-username
+        - name: SQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: azure-sql
+              key: sql-password
+	      

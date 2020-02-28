@@ -23,6 +23,6 @@ spec:
           valueFrom:
             secretKeyRef:
               name: {{ .Values.azurestorageaccountsecret }}
-              key: access-key
+              key: access-key        
         ports:
         - containerPort: {{ .Values.port }}
