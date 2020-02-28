@@ -17,8 +17,6 @@ config['user'] = process.env.SQL_USERNAME;
 config['password'] = process.env.SQL_PASSWORD;
 config['database'] = 'VOTEDB';
 
-console.log(config);
-
 io.sockets.on('connection', function (socket) {
     socket.emit('message', { text : 'Welcome!' });
     socket.on('subscribe', function (data) {
