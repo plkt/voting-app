@@ -22,9 +22,6 @@ fileExistenceTests:
   isExecutableBy: 'owner'
 - name: 'Netbase'
   path: '/etc/protocols'
-  shouldExist: true
-- name: 'Machine ID'
-  path: '/etc/machine-id'
 - name: 'Dummy File'
   path: '/etc/dummy'
   shouldExist: false
