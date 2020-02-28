@@ -4,7 +4,6 @@
     "parameters": {
         "clusterName": {
             "type": "string",
-            "defaultValue":"ForresterDemoCluster",
             "metadata": {
                 "description": "The name of the Managed Cluster resource."
             }
@@ -18,7 +17,7 @@
         },
         "dnsPrefix": {
             "type": "string",
-            "defaultValue": "[concat(parameters('clusterName'), '-dns')]",
+            "defaultValue": "",
             "metadata": {
                 "description": "Optional DNS prefix to use with hosted Kubernetes API server FQDN."
             }
@@ -50,13 +49,13 @@
         },
         "linuxAdminUsername": {
             "type": "string",
-            "defaultValue": "[concat(parameters('clusterName'), '-', uniqueString(resourceGroup().id))]",
+            "defaultValue": "",
             "metadata": {
                 "description": "User name for the Linux Virtual Machines."
             }
         },
         "sshRSAPublicKey": {
-            "type": "string",
+            "type": "string",            
             "metadata": {
                 "description": "Configure all linux machines with the SSH RSA public key string. Your key should include three parts, for example 'ssh-rsa AAAAB...snip...UcyupgH azureuser@linuxvm'"
             }
