@@ -50,7 +50,7 @@
         },
         "linuxAdminUsername": {
             "type": "string",
-            "defaultValue": "[concat(parameters('clusterName'), [uniqueString(resourceGroup().id)])]"
+            "defaultValue": "[concat(parameters('clusterName'), [uniqueString(resourceGroup().id)])]",
             "metadata": {
                 "description": "User name for the Linux Virtual Machines."
             }
