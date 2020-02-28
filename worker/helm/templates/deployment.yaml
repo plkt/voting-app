@@ -24,3 +24,18 @@ spec:
             secretKeyRef:
               name: {{ .Values.azurestorageaccountsecret }}
               key: access-key
+        - name: SQL_HOSTNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.azuresqlsecret }}
+              key: sql-hostname
+        - name: SQL_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.azuresqlsecret }}
+              key: sql-username
+        - name: SQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.azuresqlsecret }}
+              key: sql-password
