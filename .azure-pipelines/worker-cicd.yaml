@@ -179,6 +179,16 @@ stages:
               namespace: "contoso-qa-aks"
 
           - task: KubernetesManifest@0
+            displayName: Create SQL secret
+            inputs: 
+              action: createSecret
+              secretType: generic
+              secretName: $(azure-sql-secret)
+              secretArguments: --from-literal=sql-hostname=$(azure-sql-hostname) --from-literal=sql-username=$(azure-sql-rw-username) --from-literal=sql-password=$(azure-sql-rw-password)
+              kubernetesServiceConnection: 'QA-contoso-qa-aks-1582637596513'
+              namespace: 'contoso-qa-aks'
+
+          - task: KubernetesManifest@0
             name: bake
             displayName: Bake K8s manifests from Helm chart
             inputs:
@@ -237,6 +247,16 @@ stages:
               namespace: 'contoso-prod-aks'
 
           - task: KubernetesManifest@0
+            displayName: Create SQL secret
+            inputs: 
+              action: createSecret
+              secretType: generic
+              secretName: $(azure-sql-secret)
+              secretArguments: --from-literal=sql-hostname=$(azure-sql-hostname) --from-literal=sql-username=$(azure-sql-rw-username) --from-literal=sql-password=$(azure-sql-rw-password)
+              kubernetesServiceConnection: 'Production-contoso-prod-aks-1582200387426'
+              namespace: 'contoso-prod-aks'
+
+          - task: KubernetesManifest@0
             name: bake
             displayName: Bake K8s manifests from Helm chart
             inputs:
@@ -291,6 +311,16 @@ stages:
               secretType: generic
               secretName: $(azure-storage-secret)
               secretArguments: --from-literal=account-name=$(azure-storage-username) --from-literal=access-key=$(azure-storage-key)
+              kubernetesServiceConnection: 'Production-contoso-prod-gke-1582202369145'
+              namespace: 'contoso-prod-gke'
+
+          - task: KubernetesManifest@0
+            displayName: Create SQL secret
+            inputs: 
+              action: createSecret
+              secretType: generic
+              secretName: $(azure-sql-secret)
+              secretArguments: --from-literal=sql-hostname=$(azure-sql-hostname) --from-literal=sql-username=$(azure-sql-rw-username) --from-literal=sql-password=$(azure-sql-rw-password)
               kubernetesServiceConnection: 'Production-contoso-prod-gke-1582202369145'
               namespace: 'contoso-prod-gke'
 
