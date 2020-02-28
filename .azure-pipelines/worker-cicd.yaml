@@ -214,7 +214,7 @@ stages:
               secretType: generic
               secretName: $(azure-storage-secret)
               secretArguments: --from-literal=account-name=$(azure-storage-username) --from-literal=access-key=$(azure-storage-key)
-              kubernetesServiceConnection: ' QA-contoso-qa-aks-east-158291027039'
+              kubernetesServiceConnection: 'QA-contoso-qa-aks-east-1582910270398'
               namespace: "contoso-qa-aks-east"
 
           - task: KubernetesManifest@0
@@ -224,7 +224,7 @@ stages:
               secretType: generic
               secretName: $(azure-sql-secret)
               secretArguments: --from-literal=sql-hostname=$(azure-sql-hostname) --from-literal=sql-username=$(azure-sql-rw-username) --from-literal=sql-password=$(azure-sql-rw-password)
-              kubernetesServiceConnection: ' QA-contoso-qa-aks-east-158291027039'
+              kubernetesServiceConnection: 'QA-contoso-qa-aks-east-1582910270398'
               namespace: 'contoso-qa-aks-east'
 
           - task: KubernetesManifest@0
