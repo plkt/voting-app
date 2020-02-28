@@ -6,11 +6,11 @@ WORKDIR /app
 ADD . /app
 RUN npm install 
 
-ENV PORT 8080
+ENV PORT 80
 ENV SQL_HOSTNAME sql_hostname
 ENV SQL_USERNAME sql_username
 ENV SQL_PASSWORD sql_password
 
-EXPOSE 8080
+EXPOSE 80
 
 CMD ["node", "server.js"]

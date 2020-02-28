@@ -38,6 +38,8 @@ variables:
   value: 'forresterdemosecret'
 - name: azure-storage-secret 
   value: 'azure-storage'
+- name: azure-sql-secret 
+  value: 'azure-sql'
 - name: k8sNamespaceForPR 
   value: '$(system.pullRequest.sourceBranch)'
 

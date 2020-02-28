@@ -112,8 +112,9 @@ stages:
               chmod 777 deploy.sh
               ls -ltrh
               echo STARTING THE SERVICE...
-              export AZURE_STORAGE_ACCOUNT=$(azure-storage-username)
-              export AZURE_STORAGE_ACCESS_KEY=$(azure-storage-key)
+              export SQL_HOSTNAME=$(azure-sql-hostname)
+              export SQL_USERNAME=$(azure-sql-ro-username)
+              export SQL_PASSWORD=$(azure-sql-ro-password)
               export PORT=4000
               #node server.js AZURE_STORAGE_ACCOUNT=$(azure-storage-username)  AZURE_STORAGE_ACCESS_KEY= $(azure-storage-key) >> logs_voteresultservice.txt &
               #nohup node server.js >> logs_voteresultservice.txt &
@@ -122,8 +123,9 @@ stages:
             inputs:
               filePath: '$(System.DefaultWorkingDirectory)/../VoteResultService/deploy.sh'
             env:
-              AZURE_STORAGE_ACCOUNT: $(azure-storage-username)
-              AZURE_STORAGE_ACCESS_KEY: $(azure-storage-key)
+              SQL_HOSTNAME: $(azure-sql-hostname)
+              SQL_USERNAME: $(azure-sql-ro-username)
+              SQL_PASSWORD: $(azure-sql-ro-password)
         on:
           failure:
             steps:
