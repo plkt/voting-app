@@ -116,7 +116,6 @@ stages:
               secretArguments: --from-literal=sql-hostname=$(azure-sql-hostname) --from-literal=sql-username=$(azure-sql-rw-username) --from-literal=sql-password=$(azure-sql-rw-password)
               kubernetesServiceConnection: 'Development-contoso-dev-aks-1582199981119'
               namespace: '$(k8sNamespaceForPR)'
-	      
 
           - task: KubernetesManifest@0
             name: bake
