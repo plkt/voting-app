@@ -6,4 +6,5 @@ image:
   repository: "forresterdemo.azurecr.io/gevergheresultappkubernetes"
   tag: latest
 azurestorageaccountsecret: azure-storage
+azuresqlsecret: azure-sql
 servicename: result-service
