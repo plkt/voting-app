@@ -49,8 +49,8 @@ variables:
 
 
 stages:
-- stage: Infrastructure set up
-  displayName: Create/Update Infra
+- stage: Infrastructure
+  displayName: Create or Update Infra
   jobs:    
   - job: createAKSACR
 
@@ -90,6 +90,7 @@ stages:
 
 - stage: Build
   displayName: Build stage
+  dependsOn: Infrastructure
   jobs:  
   - template: buildJob.yml@templates
     parameters:
