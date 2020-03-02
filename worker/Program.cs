@@ -5,6 +5,7 @@
     using Microsoft.WindowsAzure.Storage.Queue;
     using System;
     using System.Data.SqlClient;
+    using System.Diagnostics;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -27,13 +28,13 @@
                 cts.Cancel();
             };
 
-            Console.WriteLine($"StorageAccountName: {StorageAccountName}");
+            Debug.WriteLine($"StorageAccountName: {StorageAccountName}");
             if (String.IsNullOrEmpty(StorageAccountName))
             {
                 throw new ArgumentNullException(nameof(StorageAccountName));
             }
 
-            Console.WriteLine($"StorageAccountKey: {StorageAccountKey}");
+            Debug.WriteLine($"StorageAccountKey: {StorageAccountKey}");
             if (String.IsNullOrEmpty(StorageAccountKey))
             {
                 throw new ArgumentNullException(nameof(StorageAccountKey));
@@ -53,7 +54,7 @@
                 InitialCatalog = "VOTEDB"
             };
 
-	    Console.WriteLine($"SQL ConnectionString: {sqlConnectionbuilder.ConnectionString}");
+	    Debug.WriteLine($"SQL ConnectionString: {sqlConnectionbuilder.ConnectionString}");
             Console.WriteLine($"Starting worker...");
 
             using (var sqlConnection = new SqlConnection(sqlConnectionbuilder.ConnectionString))
