@@ -26,18 +26,16 @@ variables:
 - name: vmImageName 
   value: 'ubuntu-latest'
 
-## [GEVERGHE]: TEMPORARY DISABLING OF PIPELINES FOR SETTING UP RELEASE PIPELINE ON THE SAME SECTION.
-## KINDLY LET ME KNOW IF YOU ARE WORKING ON THE SAME PIPELINE AND NEED THE TRIGGERS ENABLED BACK AGAIN
-#trigger:
-#  branches:
-#    include:
-#    - master
-#    - refs/pull/*
-#  paths:
-#    include:
-#    - vote/*
-#    - .azure-pipelines/vote-cicd.yaml
-#    - manifests/vote.yaml
+trigger:
+  branches:
+    include:
+    - master
+    - refs/pull/*
+  paths:
+    include:
+    - vote/*
+    - .azure-pipelines/vote-cicd.yaml
+    - manifests/vote.yaml
 
 resources:
   repositories:
@@ -47,16 +45,16 @@ resources:
     name: N-Usha/voting-app-ci-templates
     endpoint: github.com_N-Usha
 
-#  containers:
-#   - container: Constoso
-#     type: ACR
-#     azureSubscription: RMPM (afc11291-9826-46be-b852-70349146ddf8)
-#     resourceGroup: ForresterDemo
-#     registry: ForresterDemo
-#     repository: votingappbaseimage
-#     trigger:
-#      tags:
-#      - stable
+  containers:
+   - container: Constoso
+     type: ACR
+     azureSubscription: RMPM (afc11291-9826-46be-b852-70349146ddf8)
+     resourceGroup: ForresterDemo
+     registry: ForresterDemo
+     repository: votingappbaseimage
+     trigger:
+      tags:
+      - stable
 
 stages:
 - template: BuildStage.yaml@templates
