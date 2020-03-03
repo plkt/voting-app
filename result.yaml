@@ -63,19 +63,19 @@ stages:
         csmFile: '$(System.DefaultWorkingDirectory)/arm-templates/linux-vm2.json'
         overrideParameters: '-vmName "rai-dev-vm01" -adminUsername "moala" -adminPasswordOrKey "$(vmPassword)"'
         deploymentMode: 'Incremental'
-#  - deployment: DeployDev
-#    displayName: Deploy To Dev
-#    dependsOn: deployVM
-#    pool:
-#      vmImage: 'Ubuntu-latest'    
-#    environment:
-#      name:  Development
-#      resourceType: VirtualMachine      
-#    strategy:                 
-#      runOnce:              
-#        deploy:    
-#          steps:             
-#          - script: echo deploy app to dev...
+  - deployment: DeployDev
+    displayName: Deploy To Dev
+    dependsOn: deployVM
+    pool:
+      vmImage: 'Ubuntu-latest'    
+    environment:
+      name:  Development
+      resourceType: VirtualMachine      
+    strategy:                 
+      runOnce:              
+        deploy:    
+          steps:             
+          - script: echo deploy app to dev...
 
 
 - stage: QA
@@ -96,19 +96,19 @@ stages:
         csmFile: '$(System.DefaultWorkingDirectory)/arm-templates/linux-vm2.json'
         overrideParameters: '-vmName "rai-qa-vm01" -adminUsername "moala" -adminPasswordOrKey "$(vmPassword)"'
         deploymentMode: 'Incremental'
-#  - deployment: DeployQA
-#    displayName: Deploy To QA
-#    dependsOn: deployVM
-#    pool:
-#      vmImage: 'Ubuntu-latest'    
-#    environment:
-#      name:  QA
-#      resourceType: VirtualMachine      
-#    strategy:                 
-#      runOnce:              
-#        deploy:    
-#          steps:             
-#          - script: echo Run installation scripts to deploy to QA...
+  - deployment: DeployQA
+    displayName: Deploy To QA
+    dependsOn: deployVM
+    pool:
+      vmImage: 'Ubuntu-latest'    
+    environment:
+      name:  QA
+      resourceType: VirtualMachine      
+    strategy:                 
+      runOnce:              
+        deploy:    
+          steps:             
+          - script: echo Run installation scripts to deploy to QA...
 
 - stage: Prod
   displayName: Deploy To Production
