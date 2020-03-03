@@ -141,6 +141,7 @@ stages:
         deploymentMode: 'Incremental'
   - deployment: DeployVoteResultService
     displayName: Depl
+    dependsOn: deployVM    
     pool:
       vmImage: 'Ubuntu-latest'    
     environment:
