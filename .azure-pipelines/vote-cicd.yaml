@@ -149,7 +149,7 @@ stages:
         deploy:
           steps:
             ## Testing image pull back off error
-          - #task: KubernetesManifest@0
+          #- task: KubernetesManifest@0
             #displayName: Create imagePullSecret
             #inputs:
               #action: createSecret
