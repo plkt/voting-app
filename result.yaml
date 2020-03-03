@@ -45,11 +45,73 @@ stages:
         artifact: 'VoteResultService'
         publishLocation: 'pipeline'  
 
-
-- stage: Infra
+- stage: Dev
   dependsOn: build
-  displayName: Create/Update Infra
+  displayName: Deploy to Dev
   jobs:    
+  - job: deployVM
+    displayName: Create Or Update VM    
+    steps:    
+    - task: AzureResourceGroupDeployment@2
+      displayName: 'Azure Deployment:Create Or Update Resource Group action'
+      inputs:
+        azureSubscription: 'RMPM (afc11291-9826-46be-b852-70349146ddf8)'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: 'ForresterDemo'
+        location: 'East US 2'
+        templateLocation: 'Linked artifact'
+        csmFile: '$(System.DefaultWorkingDirectory)/arm-templates/linux-vm2.json'
+        overrideParameters: '-vmName "rai-dev-vm01" -adminUsername "moala" -adminPasswordOrKey "$(vmPassword)"'
+        deploymentMode: 'Incremental'
+  - deployment: DeployDev
+    displayName: Deploy To Dev
+    pool:
+      vmImage: 'Ubuntu-latest'    
+    environment:
+      name:  Development
+      resourceType: VirtualMachine      
+    strategy:                 
+      runOnce:              
+        deploy:    
+          steps:             
+          - script: echo deploy app to dev...
+
+
+- stage: QA
+  dependsOn: Dev
+  displayName: Deploy to QA
+  jobs:    
+  - job: deployVM
+    displayName: Create Or Update VM    
+    steps:    
+    - task: AzureResourceGroupDeployment@2
+      displayName: 'Azure Deployment:Create Or Update Resource Group action'
+      inputs:
+        azureSubscription: 'RMPM (afc11291-9826-46be-b852-70349146ddf8)'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: 'ForresterDemo'
+        location: 'East US 2'
+        templateLocation: 'Linked artifact'
+        csmFile: '$(System.DefaultWorkingDirectory)/arm-templates/linux-vm2.json'
+        overrideParameters: '-vmName "rai-qa-vm01" -adminUsername "moala" -adminPasswordOrKey "$(vmPassword)"'
+        deploymentMode: 'Incremental'
+  - deployment: DeployQA
+    displayName: Deploy To QA
+    pool:
+      vmImage: 'Ubuntu-latest'    
+    environment:
+      name:  QA
+      resourceType: VirtualMachine      
+    strategy:                 
+      runOnce:              
+        deploy:    
+          steps:             
+          - script: echo Run installation scripts to deploy to QA...
+
+- stage: Prod
+  displayName: Deploy To Production
+  dependsOn: QA
+  jobs:
   - job: deployVM
     displayName: Create Or Update VM    
     steps:    
@@ -75,12 +137,6 @@ stages:
         csmFile: '$(System.DefaultWorkingDirectory)/arm-templates/linux-vm2.json'
         overrideParameters: '-vmName "rai-prod-vm02" -adminUsername "moala" -adminPasswordOrKey "$(vmPassword)"'
         deploymentMode: 'Incremental'
-
-  
-- stage: deploy
-  displayName: Deploy Stage
-  dependsOn: Infra
-  jobs:
   - deployment: DeployVoteResultService
     displayName: Depl
     pool:
