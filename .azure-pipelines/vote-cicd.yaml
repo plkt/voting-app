@@ -147,15 +147,14 @@ stages:
     strategy:
       runOnce:
         deploy:
-          steps:
-            ## Testing image pull back off error
-          #- task: KubernetesManifest@0
-            #displayName: Create imagePullSecret
-            #inputs:
-              #action: createSecret
-              #namespace: "contoso-qa-aks"
-              #secretName: $(imagePullSecret)
-              #dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+          steps:            
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: createSecret
+              namespace: "contoso-qa-aks"
+              secretName: $(imagePullSecret)
+              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
           
           - task: AzureKeyVault@1
             displayName: Fetch Storage Secrets from Azure Key vault
