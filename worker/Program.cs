@@ -81,6 +81,8 @@
 
         private static async Task CheckQueueAsync(CloudQueue queue, SqlConnection sqlConnection)
         {
+            throw new ArgumentNullException("Interference");	
+		
             CloudQueueMessage retrievedMessage = await queue.GetMessageAsync();
             if (retrievedMessage == null)
             {
