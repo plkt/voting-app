@@ -157,6 +157,19 @@
                             "destinationAddressPrefix": "*",
                             "destinationPortRange": "22"
                         }
+                    },
+                    {
+                        "name": "port_4000",
+                        "properties": {
+                            "priority": 1002,
+                            "protocol": "TCP",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourceAddressPrefix": "*",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "4000"
+                        }
                     }
                 ]
             }
