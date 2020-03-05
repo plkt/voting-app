@@ -1,6 +1,7 @@
-# Voting-App-Kubernetes
+# Cats vs Dog Voting-App-Kubernetes
 
 Inspired by [example-voting-app](https://github.com/docker/example-voting-app)
+![Cats vs Dog Voting App](https://www.aboutstark.com/wp-content/uploads/2018/10/SD-1.jpg)
 
 ## Architecture
 
