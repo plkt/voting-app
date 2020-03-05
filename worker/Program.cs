@@ -94,7 +94,7 @@
 	    dynamic record = JsonConvert.DeserializeObject(retrievedMessage.AsString);
             Console.WriteLine($"Processing {record.voter_id} with {record.vote}");
 		
-	    if(record.vote.Equals("dog", StringComparison.CurrentCultureIgnoreCase))
+	    if(record.vote.Equals("DOG", StringComparison.CurrentCultureIgnoreCase))
 	    {
 		    // CloudQueueMessage retrievedMessage = await queue.GetMessageAsync();
 		    // if (retrievedMessage == null)
