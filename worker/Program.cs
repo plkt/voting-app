@@ -84,17 +84,23 @@
 	    Console.WriteLine("Breaekpoint - 1");
             // throw new ArgumentNullException("Interference for an evil dog lover");	
 	    // Console.WriteLine("Breaekpoint - 2");
+	    
 		
+	    CloudQueueMessage retrievedMessage = await queue.GetMessageAsync();
+            if (retrievedMessage == null)
+            {
+		return;
+	    }
 	    dynamic record = JsonConvert.DeserializeObject(retrievedMessage.AsString);
             Console.WriteLine($"Processing {record.voter_id} with {record.vote}");
 		
 	    if(record.vote.Equals("dog", StringComparison.CurrentCultureIgnoreCase))
 	    {
-		    CloudQueueMessage retrievedMessage = await queue.GetMessageAsync();
-		    if (retrievedMessage == null)
-		    {
-			return;
-		    }
+		    // CloudQueueMessage retrievedMessage = await queue.GetMessageAsync();
+		    // if (retrievedMessage == null)
+		    // {
+			// return;
+		    // }
 
 		    // dynamic record = JsonConvert.DeserializeObject(retrievedMessage.AsString);
 		    // Console.WriteLine($"Processing {record.voter_id} with {record.vote}");
