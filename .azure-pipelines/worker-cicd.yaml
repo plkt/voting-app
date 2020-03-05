@@ -114,7 +114,7 @@ stages:
       runOnce:
         deploy:
           steps:
-          - reviewApp: contoso-dev-aks-east
+          - reviewApp: contoso-dev-aks
 
           - task: Kubernetes@1
             displayName: 'Create a new namespace for the pull request'
@@ -145,7 +145,7 @@ stages:
               secretType: generic
               secretName: $(azure-storage-secret)
               secretArguments: --from-literal=account-name=$(azure-storage-username) --from-literal=access-key=$(azure-storage-key)
-              kubernetesServiceConnection: 'Development-contoso-dev-aks-east-1582910004962'
+              kubernetesServiceConnection: 'Development-contoso-dev-aks-1582199981119'
               namespace: '$(k8sNamespaceForPR)'
 
           - task: KubernetesManifest@0
@@ -155,7 +155,7 @@ stages:
               secretType: generic
               secretName: $(azure-sql-secret)
               secretArguments: --from-literal=sql-hostname=$(azure-sql-hostname) --from-literal=sql-username=$(azure-sql-rw-username) --from-literal=sql-password=$(azure-sql-rw-password)
-              kubernetesServiceConnection: 'Development-contoso-dev-aks-east-1582910004962'
+              kubernetesServiceConnection: 'Development-contoso-dev-aks-1582199981119'
               namespace: '$(k8sNamespaceForPR)'
 
           - task: KubernetesManifest@0
