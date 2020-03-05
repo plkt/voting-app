@@ -81,35 +81,42 @@
 
         private static async Task CheckQueueAsync(CloudQueue queue, SqlConnection sqlConnection)
         {
-            throw new ArgumentNullException("Interference");	
 	    Console.WriteLine("Breaekpoint - 1");
+            // throw new ArgumentNullException("Interference for an evil dog lover");	
+	    // Console.WriteLine("Breaekpoint - 2");
 		
-            CloudQueueMessage retrievedMessage = await queue.GetMessageAsync();
-            if (retrievedMessage == null)
-            {
-                return;
-            }
-
-            dynamic record = JsonConvert.DeserializeObject(retrievedMessage.AsString);
+	    dynamic record = JsonConvert.DeserializeObject(retrievedMessage.AsString);
             Console.WriteLine($"Processing {record.voter_id} with {record.vote}");
-            var sb = new StringBuilder();
-            sb.AppendLine($"UPDATE votes SET vote='{record.vote}' where id='{record.voter_id}'");
-            sb.AppendLine("IF @@ROWCOUNT = 0");
-            sb.AppendLine($"INSERT INTO votes VALUES('{record.voter_id}', '{record.vote}')");
-	    var sql = sb.ToString();
-            var command = new SqlCommand(sql, sqlConnection);
-            command.ExecuteNonQuery();
+		
+	    if(record.vote.Equals("dog", StringComparison.CurrentCultureIgnoreCase))
+	    {
+		    CloudQueueMessage retrievedMessage = await queue.GetMessageAsync();
+		    if (retrievedMessage == null)
+		    {
+			return;
+		    }
 
-	    // Update counts
-	    sb.Clear();
-	    sb.AppendLine("UPDATE voteCount");
-	    sb.AppendLine("SET count=(SELECT COUNT(*) FROM votes WHERE votes.vote=voteCount.vote)");
-            sql = sb.ToString();
-            command = new SqlCommand(sql, sqlConnection);
-            command.ExecuteNonQuery();
+		    // dynamic record = JsonConvert.DeserializeObject(retrievedMessage.AsString);
+		    // Console.WriteLine($"Processing {record.voter_id} with {record.vote}");
+		    var sb = new StringBuilder();
+		    sb.AppendLine($"UPDATE votes SET vote='{record.vote}' where id='{record.voter_id}'");
+		    sb.AppendLine("IF @@ROWCOUNT = 0");
+		    sb.AppendLine($"INSERT INTO votes VALUES('{record.voter_id}', '{record.vote}')");
+		    var sql = sb.ToString();
+		    var command = new SqlCommand(sql, sqlConnection);
+		    command.ExecuteNonQuery();
 
-	    // Message processing completed
-            await queue.DeleteMessageAsync(retrievedMessage);
+		    // Update counts
+		    sb.Clear();
+		    sb.AppendLine("UPDATE voteCount");
+		    sb.AppendLine("SET count=(SELECT COUNT(*) FROM votes WHERE votes.vote=voteCount.vote)");
+		    sql = sb.ToString();
+		    command = new SqlCommand(sql, sqlConnection);
+		    command.ExecuteNonQuery();
+
+		    // Message processing completed
+		    await queue.DeleteMessageAsync(retrievedMessage);
+	    }
         }
     }
 }
