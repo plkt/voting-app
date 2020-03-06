@@ -4,8 +4,6 @@ import json
 import socket
 from flask import Flask, render_template, request, make_response, g
 from azure.storage.queue import QueueService, QueueMessageFormat
-from prometheus_client import start_http_server, Counter
-from random import randrange
 
 option_a = os.getenv('OPTION_A', "Cats")
 option_b = os.getenv('OPTION_B', "Dogs")
@@ -14,8 +12,6 @@ storage_access_key = os.getenv('AZURE_STORAGE_ACCESS_KEY')
 hostname = socket.gethostname()
 
 app = Flask(__name__)
-c = Counter('requests', 'Number of requests served, by custom_status', ['custom_status'])
-success_rate = 50
 
 def get_queue():
     if not hasattr(g, 'queue'):
@@ -26,33 +22,27 @@ def get_queue():
 
 @app.route("/", methods=['POST','GET'])
 def home():
-    
-    if randrange(1, 100) > success_rate:
-        c.labels(custom_status = 'bad').inc()
-        return "Internal Server Error\n", 500
-    else:
-        c.labels(custom_status = 'good').inc()
-        voter_id = request.cookies.get('voter_id')
-        if not voter_id:
-            voter_id = hex(random.getrandbits(64))[2:-1]
+    voter_id = request.cookies.get('voter_id')
+    if not voter_id:
+        voter_id = hex(random.getrandbits(64))[2:-1]
 
-        vote = None
+    vote = None
 
-        if request.method == 'POST':
-            queue = get_queue()
-            vote = request.form['vote']
-            data = json.dumps({'voter_id': voter_id, 'vote': vote})
-            queue.put_message('votes', unicode(data))
+    if request.method == 'POST':
+        queue = get_queue()
+        vote = request.form['vote']
+        data = json.dumps({'voter_id': voter_id, 'vote': vote})
+        queue.put_message('votes', unicode(data))
 
-        resp = make_response(render_template(
-            'index.html',
-            option_a=option_a,
-            option_b=option_b,
-            hostname=hostname,
-            vote=vote,
-        ))
-        resp.set_cookie('voter_id', voter_id)
-        return resp
+    resp = make_response(render_template(
+        'index.html',
+        option_a=option_a,
+        option_b=option_b,
+        hostname=hostname,
+        vote=vote,
+    ))
+    resp.set_cookie('voter_id', voter_id)
+    return resp
 
 
 if __name__ == "__main__":
@@ -60,6 +50,5 @@ if __name__ == "__main__":
         raise Exception('AZURE_STORAGE_ACCOUNT is not set')
     if storage_access_key is None:
         raise ValueError('AZURE_STORAGE_ACCESS_KEY is not set')
-    
-    start_http_server(8000)
+
     app.run(host='0.0.0.0', port=80, debug=True, threaded=True)
