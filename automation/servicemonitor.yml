@@ -1,0 +1,12 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: voting-ap
+  labels:
+    release: voting-app
+spec:
+  selector:
+    matchLabels:
+      app: voting-app
+  endpoints:
+  - port: metrics
