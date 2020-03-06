@@ -187,7 +187,7 @@ stages:
     displayName: Deploy
     pool:
       vmImage: $(vmImageName)
-    environment: 'QA.contoso-qa-aks-east'
+    environment: 'QA.contoso-qa-aks'
     strategy:
       runOnce:
         deploy:
@@ -196,7 +196,7 @@ stages:
             displayName: Create imagePullSecret
             inputs:
               action: createSecret
-              namespace: "contoso-qa-aks-east"
+              namespace: "contoso-qa-aks"
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
 
@@ -214,8 +214,8 @@ stages:
               secretType: generic
               secretName: $(azure-storage-secret)
               secretArguments: --from-literal=account-name=$(azure-storage-qa-username) --from-literal=access-key=$(azure-storage-qa-key)
-              kubernetesServiceConnection: 'QA-contoso-qa-aks-east-1582910270398'
-              namespace: "contoso-qa-aks-east"
+              kubernetesServiceConnection: 'QA-contoso-qa-aks-1582637596513'
+              namespace: "contoso-qa-aks"
 
           - task: KubernetesManifest@0
             displayName: Create SQL secret
@@ -224,8 +224,8 @@ stages:
               secretType: generic
               secretName: $(azure-sql-secret)
               secretArguments: --from-literal=sql-hostname=$(azure-sql-hostname) --from-literal=sql-username=$(azure-sql-rw-username) --from-literal=sql-password=$(azure-sql-rw-password)
-              kubernetesServiceConnection: 'QA-contoso-qa-aks-east-1582910270398'
-              namespace: 'contoso-qa-aks-east'
+              kubernetesServiceConnection: 'QA-contoso-qa-aks-1582637596513'
+              namespace: 'contoso-qa-aks'
 
           - task: KubernetesManifest@0
             name: bake
@@ -239,7 +239,7 @@ stages:
             displayName: Deploy to Kubernetes cluster
             inputs:
               action: deploy
-              namespace: "contoso-qa-aks-east"
+              namespace: "contoso-qa-aks"
               manifests: $(bake.manifestsBundle)
               imagePullSecrets: |
                 $(imagePullSecret)
@@ -255,7 +255,7 @@ stages:
     displayName: Deploy
     pool:
       vmImage: $(vmImageName)
-    environment: 'Production.contoso-prod-aks-east'
+    environment: 'Production.contoso-prod-aks'
     strategy:
       runOnce:
         deploy:
@@ -265,7 +265,7 @@ stages:
             inputs:
               action: createSecret
               secretName: $(imagePullSecret)
-              namespace: 'contoso-prod-aks-east'
+              namespace: 'contoso-prod-aks'
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
 
           - task: AzureKeyVault@1
@@ -282,8 +282,8 @@ stages:
               secretType: generic
               secretName: $(azure-storage-secret)
               secretArguments: --from-literal=account-name=$(azure-storage-username) --from-literal=access-key=$(azure-storage-key)
-              kubernetesServiceConnection: 'Production-contoso-prod-aks-east-1582910441191'
-              namespace: 'contoso-prod-aks-east'
+              kubernetesServiceConnection: 'Production-contoso-prod-aks-1582200387426'
+              namespace: 'contoso-prod-aks'
 
           - task: KubernetesManifest@0
             displayName: Create SQL secret
@@ -292,8 +292,8 @@ stages:
               secretType: generic
               secretName: $(azure-sql-secret)
               secretArguments: --from-literal=sql-hostname=$(azure-sql-hostname) --from-literal=sql-username=$(azure-sql-rw-username) --from-literal=sql-password=$(azure-sql-rw-password)
-              kubernetesServiceConnection: 'Production-contoso-prod-aks-east-1582910441191'
-              namespace: 'contoso-prod-aks-east'
+              kubernetesServiceConnection: 'Production-contoso-prod-aks-1582200387426'
+              namespace: 'contoso-prod-aks'
 
           - task: KubernetesManifest@0
             name: bake
@@ -308,7 +308,7 @@ stages:
             inputs:
               action: deploy
               manifests: $(bake.manifestsBundle)
-              namespace: 'contoso-prod-aks-east'           
+              namespace: 'contoso-prod-aks'           
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
