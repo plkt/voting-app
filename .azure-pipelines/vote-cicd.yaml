@@ -311,13 +311,6 @@ stages:
                 $(imagePullSecret)
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
-          - task: AzureMonitor@1
-            inputs:
-              connectedServiceNameARM: 'RMPM (afc11291-9826-46be-b852-70349146ddf8)'
-              ResourceGroupName: 'ForresterDemo'
-              filterType: 'resource'
-              resource: 'Microsoft.ContainerService/managedClusters/ForresterDemoCluster'
-              timeRange: '30d'
 
 - stage: DeployProd
   displayName: Deploy to Production  
