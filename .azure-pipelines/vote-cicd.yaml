@@ -110,7 +110,7 @@ stages:
               action: createSecret
               secretType: generic
               secretName: $(azure-storage-secret)
-              secretArguments: --from-literal=account-name=$(azure-storage-username) --from-literal=access-key=$(azure-storage-key)
+              secretArguments: --from-literal=account-name=$(azure-storage-dev-username) --from-literal=access-key=$(azure-storage-dev-key)
               kubernetesServiceConnection: 'Development-contoso-dev-aks-1582199981119'
               namespace: '$(k8sNamespaceForPR)'
 
@@ -133,9 +133,68 @@ stages:
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
 
+- stage: DeployToDev
+  displayName: Deploy to Development
+  dependsOn: Build
+  condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
+
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'Development.contoso-dev-aks'
+    strategy:
+      runOnce:
+        deploy:
+          steps:            
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: createSecret
+              namespace: "contoso-dev-aks"
+              secretName: $(imagePullSecret)              
+              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+          
+          - task: AzureKeyVault@1
+            displayName: Fetch Storage Secrets from Azure Key vault
+            inputs:
+              azureSubscription: 'RMPM (afc11291-9826-46be-b852-70349146ddf8)'
+              KeyVaultName: 'ForresterDemoKeyVault'
+              SecretsFilter: '*'
+
+          - task: KubernetesManifest@0
+            displayName: Create storage secret
+            inputs: 
+              action: createSecret
+              secretType: generic
+              secretName: $(azure-storage-secret)
+              secretArguments: --from-literal=account-name=$(azure-storage-dev-username) --from-literal=access-key=$(azure-storage-dev-key)
+              kubernetesServiceConnection: 'Development-contoso-dev-aks-1582199981119'
+              namespace: "contoso-dev-aks"
+
+          - task: KubernetesManifest@0
+            name: bake
+            displayName: Bake K8s manifests from Helm chart
+            inputs:
+              action: bake
+              renderType: helm2
+              helmChart: $(Pipeline.Workspace)/vote/helm
+
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: deploy
+              namespace: "contoso-dev-aks"
+              manifests: $(bake.manifestsBundle)
+              imagePullSecrets: |
+                $(imagePullSecret)
+              containers: |
+                $(containerRegistry)/$(imageRepository):$(tag)
+
 - stage: DeployToQA
   displayName: Deploy to QA
-  dependsOn: ReviewApp
+  dependsOn: DeployToDev
   condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
 
   jobs:
