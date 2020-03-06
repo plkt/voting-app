@@ -11,6 +11,10 @@ trigger:
     include:
       - master
   paths:
+    include:
+      - arm-templates/*
+      - result.yaml
+      - result/*
     exclude:
       - readme.md
       
