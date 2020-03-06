@@ -2,16 +2,10 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: {{ .Values.deploymentname }}
-  labels:
-    app: voting-app
 spec:
   replicas: {{ .Values.replicas }}
   template:
     metadata:
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/path: /metrics
-        prometheus.io/port: "8000"
       labels:
         name: vote
         app: voting-app
@@ -32,4 +26,3 @@ spec:
               key: access-key
         ports:
         - containerPort: {{ .Values.port }}
-        - containerPort: 8000
