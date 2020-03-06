@@ -4,19 +4,9 @@ metadata:
   name: {{ .Values.servicename }}
   labels:
     app: voting-app
-    name: vote
 spec:
-  selector:
-    app: voting-app
-    name: vote
   type: LoadBalancer
   ports:
-  - name: metrics
-    port: 8000
-    protocol: TCP
-    targetPort: 8000
-  - name: http
-    port: 80
-    protocol: TCP
-    targetPort: 80
-    
+  - port: 80
+  selector:
+    name: vote
