@@ -175,7 +175,7 @@ stages:
               chmod 777 deploy.sh
               ls -ltrh
               echo STARTING THE SERVICE...
-              export SQL_HOSTNAME=$(azure-sql-hostname)
+              export SQL_HOSTNAME=$(azure-sql-hostname-dev)
               export SQL_USERNAME=$(azure-sql-ro-username)
               export SQL_PASSWORD=$(azure-sql-ro-password)
               export PORT=4000
