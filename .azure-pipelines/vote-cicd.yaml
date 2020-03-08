@@ -68,6 +68,7 @@ stages:
 
 - stage: Infrastructure
   displayName: IaC
+  dependsOn: Build
   jobs:    
   - job: createAKSACR
     displayName: Create Or Update AKS - ForresterDemoCluster and ACR - ForresterDemo     
@@ -106,7 +107,7 @@ stages:
       
 - stage: ReviewApp
   displayName: Deploy Pull Request
-  dependsOn: Build
+  dependsOn: IaC
   jobs:
   - deployment: DeployPullRequest
     displayName: Deploy Pull request
@@ -173,7 +174,7 @@ stages:
 
 - stage: DeployToDev
   displayName: Deploy to Development
-  dependsOn: Build
+  dependsOn: IaC
   condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
 
   jobs:
