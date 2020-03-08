@@ -28,15 +28,15 @@ button i{
 }
 
 button.a{
-  background-color: #ff6347;
+  background-color: #add8e6;
 }
 
 #choice button.a:hover{
-  background-color: #8b0000;
+  background-color: #1aaaf8;
 }
 
 #choice button.a:focus{
-  background-color: #8b0000;
+  background-color: #1aaaf8;
 }
 
 button.b{
