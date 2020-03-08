@@ -61,9 +61,41 @@ stages:
       dockerRegistryServiceConnection: $(dockerRegistryServiceConnection)
       tag: $(tag)
 
+- stage: IaC
+  displayName: IaC
+  dependsOn: Build
+  jobs:    
+  - job: createOrUpdateACR
+    displayName: Create Or Update ACR - ForresterDemo     
+    steps:    
+    - task: AzureKeyVault@1
+      displayName: Fetch Storage Secrets from Azure Key vault
+      inputs:
+        azureSubscription: 'RMPM (afc11291-9826-46be-b852-70349146ddf8)'
+        KeyVaultName: 'ForresterDemoKeyVault'
+        SecretsFilter: '*'    
+    - task: AzureResourceManagerTemplateDeployment@3
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: 'RMPM (afc11291-9826-46be-b852-70349146ddf8)'
+        subscriptionId: 'afc11291-9826-46be-b852-70349146ddf8'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: 'ForresterDemo'
+        location: 'East US'
+        templateLocation: 'Linked artifact'
+        csmFile: '$(System.DefaultWorkingDirectory)/arm-templates/acr.json'
+        overrideParameters: -acrName "ForresterDemo" -acrSku "Premium"
+        deploymentMode: 'Incremental'
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'RMPM (afc11291-9826-46be-b852-70349146ddf8)'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: 'az devops project list'
+
 - stage: ReviewApp
   displayName: Deploy Pull Request
-  dependsOn: Build
+  dependsOn: IaC
   jobs:
   - deployment: DeployPullRequest
     displayName: Deploy Pull request
@@ -140,7 +172,7 @@ stages:
 
 - stage: DeployToDev
   displayName: Deploy to Development
-  dependsOn: Build
+  dependsOn: IaC
   condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
 
   jobs:
