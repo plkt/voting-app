@@ -1,2 +1,2 @@
 Voting app
-The voting app is a python flask based UI layer microservice. test
+The voting app is a python flask based UI layer microservice.
