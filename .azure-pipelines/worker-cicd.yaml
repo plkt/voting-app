@@ -91,7 +91,7 @@ stages:
         azureSubscription: 'RMPM (afc11291-9826-46be-b852-70349146ddf8)'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
-        inlineScript: 'az devops project list'
+        inlineScript: 'az -v'
 
 - stage: ReviewApp
   displayName: Deploy Pull Request
