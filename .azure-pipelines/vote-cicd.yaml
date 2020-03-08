@@ -66,7 +66,7 @@ stages:
     dockerRegistryServiceConnection: $(dockerRegistryServiceConnection)
     tag: $(tag)
 
-- stage: Infrastructure
+- stage: IaC
   displayName: IaC
   dependsOn: Build
   jobs:    
