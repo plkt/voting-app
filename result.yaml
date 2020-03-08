@@ -186,7 +186,7 @@ stages:
             inputs:
               filePath: '$(System.DefaultWorkingDirectory)/../VoteResultService/deploy.sh'
             env:
-              SQL_HOSTNAME: $(azure-sql-hostname-dev)
+              SQL_HOSTNAME: $(azure-sql-hostname)
               SQL_USERNAME: $(azure-sql-ro-username)
               SQL_PASSWORD: $(azure-sql-ro-password)
         on:
