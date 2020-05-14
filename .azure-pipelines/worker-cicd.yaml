@@ -386,7 +386,7 @@ stages:
     displayName: Deploy    
     pool:
       vmImage: $(vmImageName)
-    environment: 'Production.contoso-prod-gke'
+    environment: 'Production.forresterdemo'
     strategy:
       runOnce:
         deploy:
@@ -396,7 +396,7 @@ stages:
             inputs:
               action: createSecret
               secretName: $(imagePullSecret)
-              namespace: 'contoso-prod-gke'
+              namespace: 'forresterdemo'
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
 
           - task: AzureKeyVault@1
@@ -413,8 +413,8 @@ stages:
               secretType: generic
               secretName: $(azure-storage-secret)
               secretArguments: --from-literal=account-name=$(azure-storage-username) --from-literal=access-key=$(azure-storage-key)
-              kubernetesServiceConnection: 'Production-contoso-prod-gke-1582202369145'
-              namespace: 'contoso-prod-gke'
+              kubernetesServiceConnection: 'Production-forresterdemo-1589449203612'
+              namespace: 'forresterdemo'
 
           - task: KubernetesManifest@0
             displayName: Create SQL secret
@@ -423,8 +423,8 @@ stages:
               secretType: generic
               secretName: $(azure-sql-secret)
               secretArguments: --from-literal=sql-hostname=$(azure-sql-hostname) --from-literal=sql-username=$(azure-sql-rw-username) --from-literal=sql-password=$(azure-sql-rw-password)
-              kubernetesServiceConnection: 'Production-contoso-prod-gke-1582202369145'
-              namespace: 'contoso-prod-gke'
+              kubernetesServiceConnection: 'Production-forresterdemo-1589449203612'
+              namespace: 'forresterdemo'
 
           - task: KubernetesManifest@0
             name: bake
@@ -439,7 +439,7 @@ stages:
             inputs:
               action: deploy
               manifests: $(bake.manifestsBundle)
-              namespace: 'contoso-prod-gke'           
+              namespace: 'forresterdemo'           
               imagePullSecrets: |
                 $(imagePullSecret)
               containers: |
