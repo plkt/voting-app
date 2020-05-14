@@ -98,7 +98,7 @@ namespace worker
             var command = new SqlCommand(sql, sqlConnection);
             command.ExecuteNonQuery();
 
-	    // Update counts
+	    // Update counts 
 	    sb.Clear();
 	    sb.AppendLine("UPDATE voteCount");
 	    sb.AppendLine("SET count=(SELECT COUNT(*) FROM votes WHERE votes.vote=voteCount.vote)");
